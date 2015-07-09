@@ -54,3 +54,13 @@
   with_items:
     - "LC_ALL=en_US.UTF-8"
     - "LANG=en_US.UTF-8"
+
+- name: ensure that dev users are present
+  user: name={{ item.name }} shell=/bin/bash groups=admin,login append=yes
+  with_items: "{{ users }}"
+
+- name: add ssh keys for dev users
+  authorized_key: user={{ item.0.name }} key="{{ item.1 }}"
+  with_subelements:
+    - users
+    - public_key

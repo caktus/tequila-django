@@ -35,3 +35,17 @@
                  lc_ctype='en_US.UTF-8'
                  template='template0'
   become_user: postgres
+
+- name: configure postgres authentication
+  template: src="pg_hba.conf"
+            dest=/etc/postgresql/{{ pg_version }}/main/pg_hba.conf
+            owner=postgres group=postgres mode=0640
+  notify:
+    - reload postgres
+
+- name: configure postgres
+  template: src="postgresql.conf"
+            dest=/etc/postgresql/{{ pg_version }}/main/postgresql.conf
+            owner=postgres group=postgres mode=0644
+  notify:
+    - restart postgres

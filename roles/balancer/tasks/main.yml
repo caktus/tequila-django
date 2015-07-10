@@ -16,6 +16,12 @@
               insertafter="^# server_names_hash_bucket_size 64;"
               line="        server_names_hash_bucket_size 64;"
 
-- name: remove_existing_conf
-  file: path=/etc/nginx/sites-enabled/default
-        state=absent
+- name: allow port 80 through firewall
+  ufw: rule=allow port=http 
+
+- name: allow port 443 through firewall
+  ufw: rule=allow port=https 
+
+#- name: remove_existing_conf
+#  file: path=/etc/nginx/sites-enabled/default
+#        state=absent

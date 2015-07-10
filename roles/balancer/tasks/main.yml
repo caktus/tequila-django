@@ -12,8 +12,9 @@
 
 - name: edit nginx.conf
   lineinfile: dest=/etc/nginx/nginx.conf
-              regexp=^server_names_hash_bucket_size
-              line="server_names_hash_bucket_size 64;"
+              regexp=" server_names_hash_bucket_size 64;"
+              insertafter="^# server_names_hash_bucket_size 64;"
+              line="        server_names_hash_bucket_size 64;"
 
 - name: remove_existing_conf
   file: path=/etc/nginx/sites-enabled/default

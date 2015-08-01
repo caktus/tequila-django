@@ -72,6 +72,26 @@
         group=www-data
         mode=644
 
-# TODO: add task for optionally generating self-signed cert
+- name: optionally generate self-signed cert
+  command: {{ item }}
+           chdir={{ ssl_dir }}
+           creates={{ domain }}.crt
+  when: self_signed
+  with_items:
+    - openssl genrsa -out {{ domain }}.key 2048
+    - cp {{ domain }}.key {{ domain }}.key.secure
+    - openssl rsa -in {{ domain }}.key.secure -out {{ domain }}.key
+    - openssl req -new -key {{ domain }}.key -subj "/C=US/ST=North Carolina/L=Durham/O=Caktus/OU=IT/CN={{ domain }}" -out {{ domain }}.csr
+    - openssl x509 -req -days 365 -in {{ domain }}.csr -signkey {{ domain }}.key -out {{ domain }}.crt
 
-# TODO: add task for optionally uploading pre-generated cert
+- name: optionally upload pre-generated cert
+  copy: src={{ item }}
+        dest={{ ssl_dir }}
+        owner=root
+        mode=600
+  when: not self_signed
+  with_items:
+    - {{ domain }}.crt
+    - {{ domain }}.key
+  notify:
+    - reload nginx

@@ -95,3 +95,7 @@
     - {{ domain }}.key
   notify:
     - reload nginx
+
+# TODO: http_auth file(s)
+
+# TODO: nginx conf

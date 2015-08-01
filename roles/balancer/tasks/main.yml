@@ -4,24 +4,74 @@
 
 - name: install nginx
   apt: name=nginx
-       state=present
+       state=latest
 
 - name: start nginx
   service: name=nginx
-           state=restarted
+           state=started
+
+- name: remove_existing_conf
+  file: path=/etc/nginx/sites-enabled/default
+        state=absent
+  notify:
+    - reload nginx
 
 - name: edit nginx.conf
   lineinfile: dest=/etc/nginx/nginx.conf
               regexp=" server_names_hash_bucket_size 64;"
               insertafter="^# server_names_hash_bucket_size 64;"
               line="        server_names_hash_bucket_size 64;"
+  notify:
+    - reload nginx
 
 - name: allow port 80 through firewall
-  ufw: rule=allow port=http 
+  ufw: rule=allow port=http
 
 - name: allow port 443 through firewall
-  ufw: rule=allow port=https 
+  ufw: rule=allow port=https
 
-#- name: remove_existing_conf
-#  file: path=/etc/nginx/sites-enabled/default
-#        state=absent
+- name: create user
+  user: name={{ project_name }}
+        home=/home/{{ project_name }}
+        shell=/bin/bash
+        groups=www-data
+        append=yes # appends the group(s) set above to the user's set of groups
+
+- name: create root directory
+  file: path={{ root_dir }}
+        state=directory
+        user={{ project_name }}
+        group={{ project_name }}
+        mode=775
+
+- name: create log directory
+  file: path={{ log_dir }}
+        state=directory
+        user={{ project_name }}
+        group={{ project_name }}
+        mode=775
+
+- name: create public directory
+  file: path={{ public_dir }}
+        state=directory
+        user={{ project_name }}
+        group=www-data
+        mode=775
+
+- name: create ssh directory
+  file: path={{ ssh_dir }}
+        state=directory
+        user={{ project_name }}
+        group={{ project_name }}
+        mode=700
+
+- name: create ssl directory
+  file: path={{ ssl_dir }}
+        state=directory
+        user=root
+        group=www-data
+        mode=644
+
+# TODO: add task for optionally generating self-signed cert
+
+# TODO: add task for optionally uploading pre-generated cert

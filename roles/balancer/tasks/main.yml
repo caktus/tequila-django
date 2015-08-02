@@ -73,9 +73,10 @@
         mode=644
 
 - name: optionally generate self-signed cert
-  command: {{ item }}
-           chdir={{ ssl_dir }}
-           creates={{ domain }}.crt
+  command: "{{ item }}"
+  args:
+    chdir: "{{ ssl_dir }}"
+    creates: "{{ domain }}.crt"
   when: self_signed
   with_items:
     - openssl genrsa -out {{ domain }}.key 2048
@@ -91,8 +92,8 @@
         mode=600
   when: not self_signed
   with_items:
-    - {{ domain }}.crt
-    - {{ domain }}.key
+    - "{{ domain }}.crt"
+    - "{{ domain }}.key"
   notify:
     - reload nginx
 

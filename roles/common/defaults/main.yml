@@ -1,4 +1,9 @@
 ---
 users: []
 pg_version: 9.3
-root_dir: "/var/www/{{ project_name }}/"
+root_dir: "/var/www/{{ project_name }}"
+log_dir: "{{ root_dir }}/log"
+public_dir: "{{ root_dir }}/public"
+ssl_dir: "{{ root_dir }}/ssl"
+ssh_dir: "/home/{{ project_name }}/.ssh/"
+self_signed: true

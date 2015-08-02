@@ -40,35 +40,35 @@
 - name: create root directory
   file: path={{ root_dir }}
         state=directory
-        user={{ project_name }}
+        owner={{ project_name }}
         group={{ project_name }}
         mode=775
 
 - name: create log directory
   file: path={{ log_dir }}
         state=directory
-        user={{ project_name }}
+        owner={{ project_name }}
         group={{ project_name }}
         mode=775
 
 - name: create public directory
   file: path={{ public_dir }}
         state=directory
-        user={{ project_name }}
+        owner={{ project_name }}
         group=www-data
         mode=775
 
 - name: create ssh directory
   file: path={{ ssh_dir }}
         state=directory
-        user={{ project_name }}
+        owner={{ project_name }}
         group={{ project_name }}
         mode=700
 
 - name: create ssl directory
   file: path={{ ssl_dir }}
         state=directory
-        user=root
+        owner=root
         group=www-data
         mode=644
 

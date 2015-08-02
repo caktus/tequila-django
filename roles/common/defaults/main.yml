@@ -1,3 +1,4 @@
 ---
 users: []
 pg_version: 9.3
+root_dir: "/var/www/{{ project_name }}/"

@@ -9,3 +9,5 @@ users:
   - { name: 'vagrant', public_key: [] }
 
 app_minions: "{{ groups['web'] | union(groups['worker']) }}"
+
+python_version: 2.7

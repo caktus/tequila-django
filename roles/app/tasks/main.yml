@@ -1,6 +1,27 @@
 ---
-- name: install postfix
-  apt: pkg=postfix state=present
+- name: add the deadsnakes ppa
+  apt_repository: repo="ppa:fkrull/deadsnakes" state=present
+
+- name: install app packages
+  apt: pkg={{ item }} state=present
+  with_items:
+    - python-pip
+    - libpq-dev
+    - libev-dev
+    - libevent-dev
+    - libmemcached-dev
+    - libjpeg8
+    - libjpeg8-dev
+    - libfreetype6
+    - libfreetype6-dev
+    - zlib1g
+    - zlib1g-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - ghostscript
+    - python{{ python_version }}
+    - python{{ python_version }}-dev
+    - postfix
 
 - name: ensure postfix is running
   service: name=postfix state=started

@@ -1,6 +1,7 @@
 ---
 project_name: "caktus"
 env_name: "local"
+domain: "caktusgroup.com"
 
 db_password: "password"
 

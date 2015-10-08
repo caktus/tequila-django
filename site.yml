@@ -1,0 +1,11 @@
+---
+- hosts: all
+  sudo: yes
+  vars_files:
+    - "vars.yml"
+  pre_tasks:
+    - name: apt update
+      apt: update_cache=yes
+  roles:
+    - db-master
+    - balancer

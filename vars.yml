@@ -1,0 +1,10 @@
+---
+project_name: "caktus"
+env_name: "local"
+
+db_password: "password"
+
+users:
+  - { name: 'vagrant', public_key: [] }
+
+app_minions: "{{ groups['web'] | union(groups['worker']) }}"

@@ -1,0 +1,6 @@
+---
+- name: install postfix
+  apt: pkg=postfix state=present
+
+- name: ensure postfix is running
+  service: name=postfix state=started

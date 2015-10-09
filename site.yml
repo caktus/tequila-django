@@ -9,3 +9,4 @@
   roles:
     - db-master
     - balancer
+    - app

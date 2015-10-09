@@ -11,5 +11,10 @@ setup(
     author_email='info@caktusgroup.com',
     description='',
     zip_safe=False,
-    include_package_data = True,
+    include_package_data=True,
+    entry_points={
+        'console_scripts': [
+            'deploy=tequila.deploy:main',
+        ],
+    },
 )

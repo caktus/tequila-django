@@ -22,12 +22,50 @@
     - python{{ python_version }}
     - python{{ python_version }}-dev
     - postfix
+    - git-core
 
 - name: ensure postfix is running
   service: name=postfix state=started
 
+- name: upload github key
+  copy: content={{ github_deploy_key }}
+        dest={{ ssh_dir }}/github
+        owner={{ project_name }}
+        group={{ project_name }}
+        mode=600
+  register: github_key
+  when: github_deploy_key is defined
+
+- name: rsync project source to /vagrant/
+  synchronize: >-
+    src={{ source_dir }}
+    dest=/vagrant/
+    recursive=yes
+    delete=yes
+  when: env_name == 'local'
+
+- name: checkout latest project source
+  git: repo={{ repo.url }}
+       dest={{ source_dir }}
+       version={{ repo.branch|default('master') }}
+       force=yes
+       key_file={{ github_key.dest }}
+  remote_user: {{ project_name }}
+  when: env_name != 'local'
+
+- name: delete pyc files
+  shell: find . -name '*.pyc' -delete
+
 - name: pip install the project requirements
   pip: requirements={{ root_dir }}/requirements/{{ requirements_name[env_name]|default('production') }}.txt
-       virtualenv=/var/www/{{ project_name }}/env/
+       virtualenv={{ venv_dir }}
        virtualenv_python=/usr/bin/python{{ python_version }}
   remote_user: {{ project_name }}
+
+- name: set up the project python path
+  copy: content="{{ source_dir }}"
+        dest={{ venv_dir }}/lib/python{{ python_version }}/site-packages/project.pth
+        user={{ project_name }}
+        group={{ project_name }}
+
+# TODO: copy over environment variables to be used with the project

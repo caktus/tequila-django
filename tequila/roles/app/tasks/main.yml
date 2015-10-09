@@ -52,7 +52,7 @@
        version={{ repo.branch|default('master') }}
        force=yes
        key_file={{ github_key.dest }}
-  remote_user: {{ project_name }}
+  remote_user: "{{ project_name }}"
   when: env_name != 'local'
 
 - name: delete pyc files
@@ -62,7 +62,7 @@
   pip: requirements={{ root_dir }}/requirements/{{ requirements_name[env_name]|default('production') }}.txt
        virtualenv={{ venv_dir }}
        virtualenv_python=/usr/bin/python{{ python_version }}
-  remote_user: {{ project_name }}
+  remote_user: "{{ project_name }}"
 
 - name: set up the project python path
   copy: content="{{ source_dir }}"

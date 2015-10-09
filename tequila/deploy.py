@@ -19,12 +19,22 @@ def main():
     args = parser.parse_args()
     envname = args.envname
 
-    check_call(
-        ['ansible-playbook',
-         '-i', 'inventory/%s' % envname,
-         '-e', '@inventory/group_vars/%s' % envname,
-         '-e', 'tequila_dir=%s' % tequila_dir,
-         '-e', 'env_name=%s' % envname,
-         '%s/deploy.yml' % tequila_dir,
-         ]
-    )
+    options = [
+        '-i', 'inventory/%s' % envname,
+        '-e', '@inventory/group_vars/%s' % envname,
+        '-e', 'tequila_dir=%s' % tequila_dir,
+        '-e', 'env_name=%s' % envname,
+    ]
+
+    if os.path.exists('.vaultpassword'):
+        options.extend(
+            ['--vault-password-file', '.vaultpassword',
+             '-e', '@inventory/secrets/%s' % envname,
+             ]
+        )
+    else:
+        print("WARNING: No .vaultpassword file found, will not use any secrets.")
+
+    command = ['ansible-playbook'] + options + ['%s/deploy.yml' % tequila_dir]
+
+    check_call(command)

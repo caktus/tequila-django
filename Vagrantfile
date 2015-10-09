@@ -18,6 +18,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.extra_vars = { }
     ansible.playbook = "site.yml"
 #    ansible.verbose = 'vv'
-    ansible.roles_path = "tequila/roles"
   end
 end

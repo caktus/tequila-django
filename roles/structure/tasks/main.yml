@@ -1,0 +1,35 @@
+---
+- name: create the project user
+  user: name={{ project_name }}
+        home=/home/{{ project_name }}
+        shell=/bin/bash
+        groups=www-data
+        append=yes # appends the group(s) set above to the user's set of groups
+
+- name: create the project root directory
+  file: path={{ root_dir }}
+        state=directory
+        owner={{ project_name }}
+        group={{ project_name }}
+        mode=775
+
+- name: create the log directory
+  file: path={{ log_dir }}
+        state=directory
+        owner={{ project_name }}
+        group=www-data
+        mode=775
+
+- name: create the public directory
+  file: path={{ public_dir }}
+        state=directory
+        owner={{ project_name }}
+        group=www-data
+        mode=775
+
+- name: create the user ssh directory
+  file: path={{ ssh_dir }}
+        state=directory
+        owner={{ project_name }}
+        group={{ project_name }}
+        mode=700

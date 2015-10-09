@@ -30,41 +30,6 @@
 - name: allow port 443 through firewall
   ufw: rule=allow port=https
 
-- name: create user
-  user: name={{ project_name }}
-        home=/home/{{ project_name }}
-        shell=/bin/bash
-        groups=www-data
-        append=yes # appends the group(s) set above to the user's set of groups
-
-- name: create root directory
-  file: path={{ root_dir }}
-        state=directory
-        owner={{ project_name }}
-        group={{ project_name }}
-        mode=775
-
-- name: create log directory
-  file: path={{ log_dir }}
-        state=directory
-        owner={{ project_name }}
-        group={{ project_name }}
-        mode=775
-
-- name: create public directory
-  file: path={{ public_dir }}
-        state=directory
-        owner={{ project_name }}
-        group=www-data
-        mode=775
-
-- name: create ssh directory
-  file: path={{ ssh_dir }}
-        state=directory
-        owner={{ project_name }}
-        group={{ project_name }}
-        mode=700
-
 - name: create ssl directory
   file: path={{ ssl_dir }}
         state=directory

@@ -22,40 +22,50 @@
     - python{{ python_version }}
     - python{{ python_version }}-dev
     - postfix
+    - git-core
 
 - name: ensure postfix is running
   service: name=postfix state=started
 
-- name: create the project user
-  user: name={{ project_name }}
-        home=/home/{{ project_name }}
-        shell=/bin/bash
-        groups=www-data append=yes
-
-- name: create the project root directory
-  file: path=/var/www/{{ project_name }}/
-        state=directory
+- name: upload github key
+  copy: content={{ github_deploy_key }}
+        dest={{ ssh_dir }}/github
         owner={{ project_name }}
         group={{ project_name }}
-        mode=775
+        mode=600
+  register: github_key
+  when: github_deploy_key is defined
 
-- name: create the log directory
-  file: path=/var/www/{{ project_name }}/log/
-        state=directory
-        owner={{ project_name }}
-        group=www-data
-        mode=775
+- name: rsync project source to /vagrant/
+  synchronize: >-
+    src={{ source_dir }}
+    dest=/vagrant/
+    recursive=yes
+    delete=yes
+  when: env_name == 'local'
 
-- name: create the services directory
-  file: path=/var/www/{{ project_name }}/services/
-        state=directory
-        owner={{ project_name }}
-        group=www-data
-        mode=775
+- name: checkout latest project source
+  git: repo={{ repo.url }}
+       dest={{ source_dir }}
+       version={{ repo.branch|default('master') }}
+       force=yes
+       key_file={{ github_key.dest }}
+  remote_user: {{ project_name }}
+  when: env_name != 'local'
 
-- name: create the ssh directory
-  file: path=/home/{{ project_name }}/.ssh/
-        state=directory
-        owner={{ project_name }}
+- name: delete pyc files
+  shell: find . -name '*.pyc' -delete
+
+- name: pip install the project requirements
+  pip: requirements={{ root_dir }}/requirements/{{ requirements_name[env_name]|default('production') }}.txt
+       virtualenv={{ venv_dir }}
+       virtualenv_python=/usr/bin/python{{ python_version }}
+  remote_user: {{ project_name }}
+
+- name: set up the project python path
+  copy: content="{{ source_dir }}"
+        dest={{ venv_dir }}/lib/python{{ python_version }}/site-packages/project.pth
+        user={{ project_name }}
         group={{ project_name }}
-        mode=700
+
+# TODO: copy over environment variables to be used with the project

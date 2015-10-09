@@ -27,6 +27,8 @@
 - name: ensure postfix is running
   service: name=postfix state=started
 
+# TODO: pip install supervisord and set up
+
 - name: upload github key
   copy: content={{ github_deploy_key }}
         dest={{ ssh_dir }}/github

@@ -28,9 +28,18 @@ How to use
 ----------
 
 * Create & activate a virtualenv for your project.
+* Add a SPECIFIC tagged version of tequila to your project requirements, e.g.
+  in ``requirements.txt``::
+
+    git+https://github.com/caktus/tequila.git@0.0.1
+
+  This is so once you have Tequila working with the version you have pinned,
+  updates to Tequila won't be applied until you're ready to test them and
+  make sure things still work.
+
 * Install the tequila package into your virtualenv, e.g.::
 
-    pip install tequila
+    pip install -r requirements.txt
 
 * In your project's top-level directory (which will be the current directory
   when you run deploys), create an ``inventory`` directory.

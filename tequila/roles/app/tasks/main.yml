@@ -40,13 +40,14 @@
   register: github_key
   when: github_deploy_key is defined
 
-- name: rsync project source to /vagrant/
-  synchronize: >-
-    src={{ source_dir }}
-    dest=/vagrant/
-    recursive=yes
-    delete=yes
-  when: env_name == 'local'
+# TODO: come up with a safer way of exposing the local repo
+# - name: rsync project source to /vagrant/
+#   synchronize: >-
+#     src={{ source_dir }}
+#     dest=/vagrant/
+#     recursive=yes
+#     delete=yes
+#   when: env_name == 'local'
 
 - name: checkout latest project source
   git: repo={{ repo.url }}

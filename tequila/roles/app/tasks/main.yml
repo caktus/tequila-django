@@ -3,7 +3,7 @@
   apt_repository: repo="ppa:fkrull/deadsnakes" state=present
 
 - name: install app packages
-  apt: pkg={{ item }} state=present
+  apt: pkg={{ item }} state=present update_cache=yes cache_valid_time=3600
   with_items:
     - python-pip
     - libpq-dev
@@ -19,6 +19,8 @@
     - libxml2-dev
     - libxslt1-dev
     - ghostscript
+    - libpython{{ python_version }}
+    - libpython{{ python_version }}-dev
     - python{{ python_version }}
     - python{{ python_version }}-dev
     - postfix
@@ -51,7 +53,7 @@
        dest={{ source_dir }}
        version={{ repo.branch|default('master') }}
        force=yes
-       key_file={{ github_key.dest }}
+       key_file={{ github_key.dest|default(None) }}
   remote_user: "{{ project_name }}"
   when: env_name != 'local'
 

@@ -2,6 +2,7 @@
 users: []
 pg_version: 9.3
 root_dir: "/var/www/{{ project_name }}"
+source_dir: "{{ root_dir }}/src"
 venv_dir: "{{ root_dir }}/env"
 log_dir: "{{ root_dir }}/log"
 public_dir: "{{ root_dir }}/public"

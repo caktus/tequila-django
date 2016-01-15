@@ -44,15 +44,6 @@
         group=root
         mode=744
 
-- name: upload supervisor config file
-  copy: src=supervisord.conf
-        dest=/etc/supervisor/supervisord.conf
-        owner=root
-        group=root
-        mode=644
-  notify:
-    - reload supervisor
-
 - name: create directory paths for supervisor
   file: path={{ item }}
         state=directory
@@ -62,6 +53,15 @@
   with_items:
     - /var/log/supervisor
     - /etc/supervisor/conf.d
+
+- name: upload supervisor config file
+  copy: src=supervisord.conf
+        dest=/etc/supervisor/supervisord.conf
+        owner=root
+        group=root
+        mode=644
+  notify:
+    - reload supervisor
 
 - name: symlink supervisor config to official location
   file: src=/etc/supervisor/supervisord.conf

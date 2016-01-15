@@ -78,4 +78,51 @@
 #        group={{ project_name }}
 #  become_user: "{{ project_name }}"
 
-# TODO: copy over environment variables to be used with the project
+- name: create/update .env file
+  template: >
+    dest={{ source_dir }}/.env
+    owner={{ project_name }}
+    group={{ project_name }}
+    mode=400
+    src=envfile.j2
+
+- name: make manage.py executable (because django_manage expects it)
+  file: >
+    path={{ source_dir }}/manage.py
+    mode=0755
+  become_user: "{{ project_name }}"
+
+- name: collectstatic
+  django_manage: >
+    command=collectstatic
+    app_path={{ source_dir }}
+    virtualenv={{ venv_dir }}
+  become_user: "{{ project_name }}"
+
+# These only work if the database is local
+# Otherwise, the user and db will have to be created manually
+- name: create the project postgres user
+  postgresql_user: name="{{ db_user }}"
+                   role_attr_flags=NOCREATEDB,NOCREATEROLE,NOSUPERUSER
+                   password="{{ db_password }}"
+                   encrypted=yes
+  become_user: postgres
+  when: db_host == 'localhost'
+
+- name: create the project database
+  postgresql_db: name="{{ db_name }}"
+                 owner="{{ db_user }}"
+                 state=present
+                 encoding='UTF-8'
+                 lc_collate='en_US.UTF-8'
+                 lc_ctype='en_US.UTF-8'
+                 template='template0'
+  become_user: postgres
+  when: db_host == 'localhost'
+
+- name: migrate
+  django_manage: >
+    command=migrate
+    app_path={{ source_dir }}
+    virtualenv={{ venv_dir }}
+  become_user: "{{ project_name }}"

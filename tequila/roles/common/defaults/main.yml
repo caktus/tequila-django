@@ -3,9 +3,14 @@ users: []
 pg_version: 9.3
 root_dir: "/var/www/{{ project_name }}"
 source_dir: "{{ root_dir }}/src"
+static_dir: "{{ root_dir }}/public/static"
 venv_dir: "{{ root_dir }}/env"
 log_dir: "{{ root_dir }}/log"
 public_dir: "{{ root_dir }}/public"
 ssl_dir: "{{ root_dir }}/ssl"
 ssh_dir: "/home/{{ project_name }}/.ssh"
 self_signed: true
+db_name: "{{ project_name }}_{{ env_name }}"
+db_host: localhost
+db_port: 5432
+db_user: "{{ project_name }}_{{ env_name }}"

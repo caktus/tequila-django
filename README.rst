@@ -77,13 +77,17 @@ How to use
       echo "password" >.vaultpassword
       chmod 600 .vaultpassword
 
-* Run ``deploy --envname=<envname>`` to update servers.  E.g.::
+* TODO: Insert instructions for FIRST deploy, that might need to run
+  as root or ubuntu or whatever the initial user the server has set up
+  is.
 
-    deploy --envname=staging
+* Run ``deploy <envname>`` to update servers.  E.g.::
+
+    deploy staging
 
   or::
 
-    deploy --envname=production
+    deploy production
 
 TODO: Create more detailed documentation, including which groups to use and
 what variables need to be set, and lots of examples of the whole process

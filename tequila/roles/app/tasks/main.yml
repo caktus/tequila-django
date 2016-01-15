@@ -25,6 +25,7 @@
     - python{{ python_version }}-dev
     - postfix
     - git-core
+    - python-virtualenv
 
 - name: ensure postfix is running
   service: name=postfix state=started
@@ -55,22 +56,26 @@
        version={{ repo.branch|default('master') }}
        force=yes
        key_file={{ github_key.dest|default(None) }}
-  remote_user: "{{ project_name }}"
+  become_user: "{{ project_name }}"
   when: env_name != 'local'
 
 - name: delete pyc files
   shell: find . -name '*.pyc' -delete
+  args:
+    chdir: "{{ source_dir }}"
+  become_user: "{{ project_name }}"
 
 - name: pip install the project requirements
-  pip: requirements={{ root_dir }}/requirements/{{ requirements_name[env_name]|default('production') }}.txt
+  pip: requirements={{ source_dir }}/requirements/{{ requirements_name[env_name]|default('production') }}.txt
        virtualenv={{ venv_dir }}
        virtualenv_python=/usr/bin/python{{ python_version }}
-  remote_user: "{{ project_name }}"
+  become_user: "{{ project_name }}"
 
-- name: set up the project python path
-  copy: content="{{ source_dir }}"
-        dest={{ venv_dir }}/lib/python{{ python_version }}/site-packages/project.pth
-        user={{ project_name }}
-        group={{ project_name }}
+#- name: set up the project python path
+#  copy: content="{{ source_dir }}"
+#        dest={{ venv_dir }}/lib/python{{ python_version }}/site-packages/project.pth
+#        user={{ project_name }}
+#        group={{ project_name }}
+#  become_user: "{{ project_name }}"
 
 # TODO: copy over environment variables to be used with the project

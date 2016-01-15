@@ -38,11 +38,6 @@
   notify:
     - restart fail2ban
 
-- name: configure sshd
-  copy: src=sshd_config dest=/etc/ssh/sshd_config owner=root mode=0644
-  notify:
-    - restart sshd
-
 - name: add github to the ssh known hosts
   lineinfile: line="{{ lookup('file', 'github.pub') }}"
               dest=/etc/ssh/ssh_known_hosts
@@ -66,3 +61,12 @@
   with_subelements:
     - users
     - public_key
+
+# Now that we've hopefully configured some non-root users to be able to ssh
+# in, update the sshd config, which (among other things) will disable root
+# logins.
+- name: configure sshd
+  copy: src=sshd_config dest=/etc/ssh/sshd_config owner=root mode=0644
+  notify:
+    - restart sshd
+

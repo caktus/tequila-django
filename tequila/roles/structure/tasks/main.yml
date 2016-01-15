@@ -35,8 +35,23 @@
     group={{ project_name }}
     owner={{ project_name }}
 
+- name: media dir
+  file: >
+    path={{ media_dir }}
+    state=directory
+    mode=0755
+    group={{ project_name }}
+    owner={{ project_name }}
+
 - name: create the user ssh directory
   file: path={{ ssh_dir }}
+        state=directory
+        owner={{ project_name }}
+        group={{ project_name }}
+        mode=700
+
+- name: create the ssl directory
+  file: path={{ ssl_dir }}
         state=directory
         owner={{ project_name }}
         group={{ project_name }}

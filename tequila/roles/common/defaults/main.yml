@@ -4,6 +4,7 @@ pg_version: 9.3
 root_dir: "/var/www/{{ project_name }}"
 source_dir: "{{ root_dir }}/src"
 static_dir: "{{ root_dir }}/public/static"
+media_dir: "{{ root_dir }}/public/media"
 venv_dir: "{{ root_dir }}/env"
 log_dir: "{{ root_dir }}/log"
 public_dir: "{{ root_dir }}/public"
@@ -14,3 +15,7 @@ db_name: "{{ project_name }}_{{ env_name }}"
 db_host: localhost
 db_port: 5432
 db_user: "{{ project_name }}_{{ env_name }}"
+dhparams_file: "{{ ssl_dir }}/dhparams.pem"
+
+# Set this false to turn off forcing all requests to SSL
+force_ssl: true

@@ -1,7 +1,7 @@
 ---
 # file: tequila/deploy.yml
 #
-# This playbook will deploy the entire environment
+# This playbook will deploy an entire environment
 #
 - hosts: all
   pre_tasks:
@@ -20,4 +20,17 @@
 
 - hosts: web
   roles:
+    - balancer
     - web
+
+- hosts: cache
+  roles:
+    - cache
+
+- hosts: queue
+  roles:
+    - queue
+
+- hosts: worker
+  roles:
+    - worker

@@ -91,3 +91,8 @@ How to use
 
 TODO: Create more detailed documentation, including which groups to use and
 what variables need to be set, and lots of examples of the whole process
+
+TODO: document that setting force_ssl False will make port 80 also serve
+Django rather than redirecting to https.
+
+TODO: add hstore & postgis

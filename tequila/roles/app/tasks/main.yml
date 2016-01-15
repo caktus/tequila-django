@@ -76,8 +76,8 @@
 - name: upload github key
   copy: content={{ github_deploy_key }}
         dest={{ ssh_dir }}/github
-        owner={{ project_name }}
-        group={{ project_name }}
+        owner={{ project_user }}
+        group={{ project_user }}
         mode=600
   register: github_key
   when: github_deploy_key is defined
@@ -97,33 +97,31 @@
        version={{ repo.branch|default('master') }}
        force=yes
        key_file={{ github_key.dest|default(None) }}
-  become_user: "{{ project_name }}"
+  become_user: "{{ project_user }}"
   when: env_name != 'local'
 
 - name: delete pyc files
-  shell: find . -name '*.pyc' -delete
-  args:
-    chdir: "{{ source_dir }}"
-  become_user: "{{ project_name }}"
+  shell: find {{ source_dir }} -name '*.pyc' -delete
+  become_user: "{{ project_user }}"
 
 - name: pip install the project requirements
   pip: requirements={{ source_dir }}/requirements/{{ requirements_name[env_name]|default('production') }}.txt
        virtualenv={{ venv_dir }}
        virtualenv_python=/usr/bin/python{{ python_version }}
-  become_user: "{{ project_name }}"
+  become_user: "{{ project_user }}"
 
 #- name: set up the project python path
 #  copy: content="{{ source_dir }}"
 #        dest={{ venv_dir }}/lib/python{{ python_version }}/site-packages/project.pth
-#        user={{ project_name }}
-#        group={{ project_name }}
-#  become_user: "{{ project_name }}"
+#        user={{ project_user }}
+#        group={{ project_user }}
+#  become_user: "{{ project_user }}"
 
 - name: create/update .env file
   template: >
     dest={{ source_dir }}/.env
-    owner={{ project_name }}
-    group={{ project_name }}
+    owner={{ project_user }}
+    group={{ project_user }}
     mode=400
     src=envfile.j2
 
@@ -131,14 +129,14 @@
   file: >
     path={{ source_dir }}/manage.py
     mode=0755
-  become_user: "{{ project_name }}"
+  become_user: "{{ project_user }}"
 
 - name: collectstatic
   django_manage: >
     command=collectstatic
     app_path={{ source_dir }}
     virtualenv={{ venv_dir }}
-  become_user: "{{ project_name }}"
+  become_user: "{{ project_user }}"
 
 # These only work if the database is local
 # Otherwise, the user and db will have to be created manually
@@ -166,4 +164,4 @@
     command=migrate
     app_path={{ source_dir }}
     virtualenv={{ venv_dir }}
-  become_user: "{{ project_name }}"
+  become_user: "{{ project_user }}"

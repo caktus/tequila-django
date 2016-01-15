@@ -1,6 +1,7 @@
 ---
 users: []
 pg_version: 9.3
+project_user: "{{ project_name }}"
 root_dir: "/var/www/{{ project_name }}"
 source_dir: "{{ root_dir }}/src"
 static_dir: "{{ root_dir }}/public/static"

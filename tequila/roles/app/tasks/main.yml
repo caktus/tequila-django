@@ -30,7 +30,48 @@
 - name: ensure postfix is running
   service: name=postfix state=started
 
-# TODO: pip install supervisord and set up
+- name: remove supervisor system package
+  apt: pkg=supervisor state=absent
+
+# pip install to obtain a consistent version number
+- name: pip install supervisor
+  pip: name=supervisor version=3.0
+
+- name: upload supervisor init script
+  copy: src=service.sh
+        dest=/etc/init.d/supervisor
+        owner=root
+        group=root
+        mode=744
+
+- name: upload supervisor config file
+  copy: src=supervisord.conf
+        dest=/etc/supervisor/supervisord.conf
+        owner=root
+        group=root
+        mode=644
+  notify:
+    - reload supervisor
+
+- name: create directory paths for supervisor
+  file: path={{ item }}
+        state=directory
+        owner=root
+        group=root
+        mode=744
+  with_items:
+    - /var/log/supervisor
+    - /etc/supervisor/conf.d
+
+- name: symlink supervisor config to official location
+  file: src=/etc/supervisor/supervisord.conf
+        dest=/etc/supervisord.conf
+        state=link
+  notify:
+    - reload supervisor
+
+- name: ensure supervisor is running
+  service: name=supervisor state=started
 
 - name: upload github key
   copy: content={{ github_deploy_key }}

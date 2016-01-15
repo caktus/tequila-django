@@ -19,3 +19,5 @@ dhparams_file: "{{ ssl_dir }}/dhparams.pem"
 
 # Set this false to turn off forcing all requests to SSL
 force_ssl: true
+
+app_minions: "{{ groups['web'] | union(groups['worker']) }}"

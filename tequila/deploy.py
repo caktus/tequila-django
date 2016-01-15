@@ -70,15 +70,23 @@ def main():
         help="Create the files for the environment specified as `envname` if they "
              "don't already exist, then exit.",
     )
+    parser.add_argument(
+        "--inventory",
+        "-i",
+        action='store',
+        help="Use a different inventory file than the default."
+    )
     args = parser.parse_args()
     envname = args.envname
 
     inventory_file = 'inventory/{}'.format(envname)
+    if args.inventory:
+        inventory_file = args.inventory
     group_vars_file = 'inventory/group_vars/{}'.format(envname)
     secrets_file = 'inventory/secrets/{}'.format(envname)
 
     if args.newenv:
-        print("Creating new environment {}".format(envname))
+        print("Creating new environment {!r}".format(envname))
         touch(inventory_file,
               INVENTORY_FILE_TEMPLATE.format(envname=envname))
         touch(group_vars_file,
@@ -88,33 +96,34 @@ def main():
         return
 
     if not os.path.exists(inventory_file):
-        print("ERROR: No inventory file found at {}, is {} a valid environment?".format(inventory_file, envname))
+        print("ERROR: No inventory file found at {!r}, is {!r} a valid environment?".format(inventory_file, envname))
         return
     if not os.path.exists(group_vars_file):
-        print("ERROR: No vars file found at {}, is {} a valid environment?".format(group_vars_file, envname))
+        print("ERROR: No vars file found at {!r}, is {!r} a valid environment?".format(group_vars_file, envname))
         return
 
-    options = [
+    playbook_options = [
         '--become',
         '-i', inventory_file,
-        '-e', '@' + group_vars_file,
         '-e', 'tequila_dir=%s' % tequila_dir,
         '-e', 'env_name=%s' % envname,
+        '-e', 'local_project_dir=%s' % os.getcwd(),
     ]
 
-    if os.path.exists('.vaultpassword'):
+    password_file = '.vaultpassword-{envname}'.format(envname=envname)
+    if os.path.exists(password_file):
         if os.path.exists(secrets_file):
-            options.extend(
-                ['--vault-password-file', '.vaultpassword',
+            playbook_options.extend(
+                ['--vault-password-file', password_file,
                  '-e', '@' + secrets_file,
                  ]
             )
         else:
-            print("WARNING: Found .vaultpassword, but no secrets file at {}".format(secrets_file))
+            print("WARNING: Found {}, but no secrets file at {}".format(password_file, secrets_file))
     else:
-        print("WARNING: No .vaultpassword file found, will not use any secrets.")
+        print("WARNING: No {} file found, will not use any secrets.".format(password_file))
 
-    command = ['ansible-playbook'] + options + ['%s/deploy.yml' % tequila_dir]
+    command = ['ansible-playbook'] + playbook_options + ['%s/deploy.yml' % tequila_dir]
 
     print("Invoking ansible: {}".format(command))
 

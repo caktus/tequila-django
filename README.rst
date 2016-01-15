@@ -96,3 +96,6 @@ TODO: document that setting force_ssl False will make port 80 also serve
 Django rather than redirecting to https.
 
 TODO: add hstore & postgis
+
+TODO: document that setting source_is_local True will sync the project
+files from the current directory instead of pulling them from git.

@@ -98,7 +98,30 @@
        force=yes
        key_file={{ github_key.dest|default(None) }}
   become_user: "{{ project_name }}"
-  when: env_name != 'local'
+  when: env_name != 'local' and not source_is_local
+
+# NB! The trailing '/' on the 'src' parameter is significant, do not remove!
+# (see the docs: http://docs.ansible.com/ansible/synchronize_module.html)
+- name: sync source from local directory
+  synchronize:
+    dest: "{{ source_dir }}"
+    src: "{{ local_project_dir }}/"
+    delete: yes
+    rsync_path: "sudo rsync"  # Use sudo on the remote system
+#    set_remote_user: true
+    recursive: true
+    rsync_opts:
+      - "--exclude=.git"
+      - "--exclude=*.pyc"
+  become: no  # stops synchronize trying to sudo locally
+  when: source_is_local
+
+- name: force proper ownership of source
+  file:
+    owner: "{{ project_name }}"
+    group: "{{ project_name }}"
+    path: "{{ source_dir }}"
+    recurse: yes
 
 - name: delete pyc files
   shell: find . -name '*.pyc' -delete
@@ -119,6 +142,9 @@
 #        group={{ project_name }}
 #  become_user: "{{ project_name }}"
 
+# THIS needs to come AFTER syncing the source to the server,
+# since that might remove files like .env that weren't in the
+# source directory locally.
 - name: create/update .env file
   template: >
     dest={{ source_dir }}/.env

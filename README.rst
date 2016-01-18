@@ -46,38 +46,97 @@ How to use
 * For each environment (e.g. `staging`, `production`), create a new `Ansible
   inventory file <http://docs.ansible.com/ansible/intro_inventory.html>`_
   in the ``inventory`` directory, named the same as the environment
-  (with no extension).  E.g.::
-
-      vi $(PWD)/inventory/staging
+  (with no extension).  The inventory file is an ``ini``-format file.
 
   The purpose of the inventory file is to specify which hosts are serving which
-  roles in the deploy, and how to connect to them. To do this, servers should be
-  added to the groups "db", "worker", and "web", as appropriate.
+  roles in the deploy, *and* how to connect to them. To do this, servers should be
+  added to the groups "db", "worker", and "web", as appropriate, and variables
+  such as ``ansible_ssh_host`` and ``ansible_ssh_user`` can be set on individual
+  hosts.
+
+  Also - *very important* - there must be a group named the same as the environment,
+  that contains all hosts for that environment. That way, any variables that we
+  put into ``inventory/group_vars/<envname>`` will get applied to all the
+  environment's servers by Ansible.
+
+  Example::
+
+      # file: inventory/staging
+
+      # Put all staging servers into this group. We can also
+      # give the servers convenient "names" here, and then use
+      # ansible_ssh_host and other variables to tell Ansible how
+      # to connect to them.
+      [staging]
+      server1 ansible_ssh_host=ec2-gibberish.more.long.domain
+      server2 ansible_ssh_host=ec2-gibberish2.more.long.domain
+
+      [web]
+      server1
+
+      [db]
+      server2
+
+      [worker]
+      # no workers yet for this project
 
   TBD: Update that list as we add more groups?  Probably better to flesh out this
   part of the documentation in much greater detail somewhere other than this
   README.
+
+* Put any variables that should be set for the whole project in a YAML file
+  named ``$(PWD)/inventory/group_vars/all``.  E.g.::
+
+      vi $(PWD)/inventory/group_vars/all
+
+  and it'll look something like this::
+
+      ---
+      # file: inventory/group_vars/all
+      project_name: our_neat_project
+      python_version: 3.4
+      less_version: 2.1.0
+      postgres_version: 9.3
 
 * Put any variables that should be set for the entire environment in a YAML file
   named ``$(PWD)/inventory/group_vars/<envname>``.  E.g.::
 
       vi $(PWD)/inventory/group_vars/staging
 
-* Put any variables that need to be kept secret in a YAML file named
+  example::
+
+      ---
+      # file: inventory/group_vars/staging
+      domain: project-staging.domain.com
+      repo:
+        url: git@github.com:caktus/caktus-website.git
+        branch: develop
+
+* For any variables whose values need to be kept secret (e.g. passwords), declare
+  them in the appropriate ``$(PWD)/inventory/group_vars/<filename>`` too, but set their value to
+  ``{{ secret_<varname> }}``.  E.g. if the variable is DB_PASSWORD, put this in
+  the environment variable file::
+
+      DB_PASSWORD: {{ secret_DB_PASSWORD }}
+
+* Then, set the actual values of the ``secret_<varname>`` variables in a YAML file named
   ``$(PWD)/inventory/secrets/<envname>`` and encrypt it using the `Ansible
   vault <http://docs.ansible.com/ansible/playbooks_vault.html>`_, e.g.::
 
       ansible-vault edit $(PWD)/inventory/secrets/staging
 
-* Put the password for the Ansible vault in a file named ``.vaultpassword``.
-  Be *sure* that (1) it does not get added to version control, and (2) it
-  is not public (e.g. set permissions to 0600 or something).  E.g.::
+  (This two-step approach to secret variables is an
+  `Ansible best practice <http://docs.ansible.com/ansible/playbooks_best_practices.html#variables-and-vaults>`_).
 
-      echo ".vaultpassword" >>.gitignore
-      echo "password" >.vaultpassword
-      chmod 600 .vaultpassword
+* Put the passwords for the Ansible vault in files named ``.vaultpassword-<envname>``.
+  Be *sure* that (1) they do not get added to version control, and (2) they
+  are not public (e.g. set permissions to 0600).  E.g.::
 
-* TODO: Insert instructions for FIRST deploy, that might need to run
+      echo ".vaultpassword*" >>.gitignore
+      echo "password" >.vaultpassword-staging
+      chmod 600 .vaultpassword-staging
+
+* TODO: Add instructions here for the FIRST deploy. It might need to run
   as root or ubuntu or whatever the initial user the server has set up
   is.
 
@@ -88,6 +147,49 @@ How to use
   or::
 
     deploy production
+
+Where to set variables
+----------------------
+
+Ansible supports setting variables in many places. Let's try to agree on some
+common practices for our projects:
+
+* Variables that are global to the project go in ``inventory/group_vars/all``::
+
+    ---
+    # file: inventory/group_vars/all
+    project_name: our_project
+
+* Variables that apply to all servers in an environment go in
+  ``inventory/group_vars/<envname>``::
+
+    ---
+    # file: inventory/group_vars/staging
+    domain: project-staging.example.com
+
+* Variables whose values should be secret should be declared in the same
+  files as other variables, depending on their scope, but their value
+  should be set to ``{{ secret_<varname> }}``::
+
+    ---
+    # file: inventory/group_vars/staging
+    DB_PASSWORD: {{ secret_DB_PASSWORD }}
+
+* For each secret variable mentioned in ``inventory/group_vars/<FILENAME>``,
+  declare its actual value in ``inventory/secrets/<FILENAME>``.  E.g.
+  if DB_PASSWORD is set to ``{{ secret_DB_PASSWORD }}`` in
+  ``inventory/group_vars/staging``, then in ``inventory/secrets/staging``
+  we would expect to see::
+
+      ---
+      # file: inventory/secrets/staging
+      secret_DB_PASSWORD: "value of password"
+
+* Variables telling Ansible how to connect to a particular host go into
+  the inventory file, on the same line as the first mention of that host.
+
+TODO for this README
+--------------------
 
 TODO: Create more detailed documentation, including which groups to use and
 what variables need to be set, and lots of examples of the whole process

@@ -82,24 +82,27 @@ def main():
     inventory_file = 'inventory/{}'.format(envname)
     if args.inventory:
         inventory_file = args.inventory
-    group_vars_file = 'inventory/group_vars/{}'.format(envname)
-    secrets_file = 'inventory/secrets/{}'.format(envname)
+    global_vars_file = 'inventory/group_vars/all'
+    env_vars_file = 'inventory/group_vars/{}'.format(envname)
+    global_secrets_file = 'inventory/secrets/all'
+    env_secrets_file = 'inventory/secrets/{}'.format(envname)
+    password_file = '.vaultpassword-{envname}'.format(envname=envname)
 
     if args.newenv:
         print("Creating new environment {!r}".format(envname))
         touch(inventory_file,
               INVENTORY_FILE_TEMPLATE.format(envname=envname))
-        touch(group_vars_file,
+        touch(env_vars_file,
               "---\n# Variables file for environment {}\nfoo: bar\n".format(envname))
-        touch(secrets_file, SECRETS_FILE_TEMPLATE
-              .format(envname=envname, filename=secrets_file))
+        touch(env_secrets_file, SECRETS_FILE_TEMPLATE
+              .format(envname=envname, filename=env_secrets_file))
         return
 
     if not os.path.exists(inventory_file):
         print("ERROR: No inventory file found at {!r}, is {!r} a valid environment?".format(inventory_file, envname))
         return
-    if not os.path.exists(group_vars_file):
-        print("ERROR: No vars file found at {!r}, is {!r} a valid environment?".format(group_vars_file, envname))
+    if not os.path.exists(env_vars_file):
+        print("ERROR: No vars file found at {!r}, is {!r} a valid environment?".format(env_vars_file, envname))
         return
 
     playbook_options = [
@@ -110,16 +113,13 @@ def main():
         '-e', 'local_project_dir=%s' % os.getcwd(),
     ]
 
-    password_file = '.vaultpassword-{envname}'.format(envname=envname)
     if os.path.exists(password_file):
-        if os.path.exists(secrets_file):
-            playbook_options.extend(
-                ['--vault-password-file', password_file,
-                 '-e', '@' + secrets_file,
-                 ]
-            )
-        else:
-            print("WARNING: Found {}, but no secrets file at {}".format(password_file, secrets_file))
+        playbook_options.extend(['--vault-password-file', password_file])
+        for secrets_file in [global_secrets_file, env_secrets_file]:
+            if os.path.exists(secrets_file):
+                playbook_options.extend(['-e', '@' + secrets_file])
+            else:
+                print("WARNING: Found {}, but no secrets file at {}".format(password_file, secrets_file))
     else:
         print("WARNING: No {} file found, will not use any secrets.".format(password_file))
 

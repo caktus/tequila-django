@@ -85,45 +85,38 @@ How to use
   README.
 
 * Put any variables that should be set for the whole project in a YAML file
-  named ``$(PWD)/inventory/group_vars/all``.  E.g.::
-
-      vi $(PWD)/inventory/group_vars/all
-
-  and it'll look something like this::
+  named ``$(PWD)/inventory/group_vars/all/vars.yml``.  E.g.::
 
       ---
-      # file: inventory/group_vars/all
+      # file: inventory/group_vars/all/vars.yml
       project_name: our_neat_project
       python_version: 3.4
       less_version: 2.1.0
       postgres_version: 9.3
 
 * Put any variables that should be set for the entire environment in a YAML file
-  named ``$(PWD)/inventory/group_vars/<envname>``.  E.g.::
-
-      vi $(PWD)/inventory/group_vars/staging
-
-  example::
+  named ``$(PWD)/inventory/group_vars/<envname>/vars.yml``.  E.g.::
 
       ---
-      # file: inventory/group_vars/staging
+      # file: inventory/group_vars/staging/vars.yml
       domain: project-staging.domain.com
       repo:
         url: git@github.com:caktus/caktus-website.git
         branch: develop
 
 * For any variables whose values need to be kept secret (e.g. passwords), declare
-  them in the appropriate ``$(PWD)/inventory/group_vars/<filename>`` too, but set their value to
-  ``{{ secret_<varname> }}``.  E.g. if the variable is DB_PASSWORD, put this in
-  the environment variable file::
+  them in the appropriate ``$(PWD)/inventory/group_vars/<dirname>/vars.yml`` file
+  too, but set their value to
+  ``{{ secret_<varname> }}``.  E.g. if the variable is DB_PASSWORD, just put this in
+  the variable file::
 
       DB_PASSWORD: {{ secret_DB_PASSWORD }}
 
 * Then, set the actual values of the ``secret_<varname>`` variables in a YAML file named
-  ``$(PWD)/inventory/secrets/<envname>`` and encrypt it using the `Ansible
+  ``$(PWD)/inventory/group_vars/<dirname>/secrets.yml`` and encrypt it using the `Ansible
   vault <http://docs.ansible.com/ansible/playbooks_vault.html>`_, e.g.::
 
-      ansible-vault edit $(PWD)/inventory/secrets/staging
+      ansible-vault edit $(PWD)/inventory/group_vars/staging/secrets.yml
 
   (This two-step approach to secret variables is an
   `Ansible best practice <http://docs.ansible.com/ansible/playbooks_best_practices.html#variables-and-vaults>`_).
@@ -154,17 +147,29 @@ Where to set variables
 Ansible supports setting variables in many places. Let's try to agree on some
 common practices for our projects:
 
-* Variables that are global to the project go in ``inventory/group_vars/all``::
+* The ``deploy`` script sets a few variables on the command line that take
+  precedence over all others.
+
+    tequila_dir: Directory where tequila was installed.  The ``roles`` subdirectory
+    of this is added to the roles path.
+
+    env_name: Name of the environment being deployed.
+
+    local_project_dir: The current directory when deploy was invoked.
+
+* Variables that are global to the project go in ``inventory/group_vars/all/vars.yml``
+  and ``inventory/group_vars/all/secrets.yml``::
 
     ---
-    # file: inventory/group_vars/all
+    # file: inventory/group_vars/all/vars.yml
     project_name: our_project
 
 * Variables that apply to all servers in an environment go in
-  ``inventory/group_vars/<envname>``::
+  ``inventory/group_vars/<envname>/vars.yml`` and
+  ``inventory/group_vars/<envname>/secrets.yml``::
 
     ---
-    # file: inventory/group_vars/staging
+    # file: inventory/group_vars/staging/vars.yml
     domain: project-staging.example.com
 
 * Variables whose values should be secret should be declared in the same
@@ -172,17 +177,17 @@ common practices for our projects:
   should be set to ``{{ secret_<varname> }}``::
 
     ---
-    # file: inventory/group_vars/staging
+    # file: inventory/group_vars/staging/vars.yml
     DB_PASSWORD: {{ secret_DB_PASSWORD }}
 
-* For each secret variable mentioned in ``inventory/group_vars/<FILENAME>``,
-  declare its actual value in ``inventory/secrets/<FILENAME>``.  E.g.
+* For each secret variable mentioned in ``inventory/group_vars/<dirname>/vars.yml``,
+  declare its actual value in ``inventory/group_vars/<dirname>/secrets.yml``.  E.g.
   if DB_PASSWORD is set to ``{{ secret_DB_PASSWORD }}`` in
-  ``inventory/group_vars/staging``, then in ``inventory/secrets/staging``
+  ``inventory/group_vars/staging/vars.yml``, then in ``inventory/group_vars/staging/secrets.yml``
   we would expect to see::
 
       ---
-      # file: inventory/secrets/staging
+      # file: inventory/group_vars/staging/secrets.yml
       secret_DB_PASSWORD: "value of password"
 
 * Variables telling Ansible how to connect to a particular host go into
@@ -190,6 +195,8 @@ common practices for our projects:
 
 TODO for this README
 --------------------
+
+TODO: Add full documentation for the ``deploy`` script.
 
 TODO: Create more detailed documentation, including which groups to use and
 what variables need to be set, and lots of examples of the whole process

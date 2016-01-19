@@ -17,4 +17,7 @@ setup(
             'deploy=tequila.deploy:main',
         ],
     },
+    install_requires=[
+        'cryptography',  # Not absolutely required, but speeds up Vault
+    ],
 )

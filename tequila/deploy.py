@@ -79,13 +79,11 @@ def main():
     args = parser.parse_args()
     envname = args.envname
 
-    inventory_file = 'inventory/{}'.format(envname)
-    if args.inventory:
-        inventory_file = args.inventory
-    global_vars_file = 'inventory/group_vars/all'
-    env_vars_file = 'inventory/group_vars/{}'.format(envname)
-    global_secrets_file = 'inventory/secrets/all'
-    env_secrets_file = 'inventory/secrets/{}'.format(envname)
+    inventory_file = args.inventory or 'inventory/{}'.format(envname)
+    global_vars_file = 'inventory/group_vars/all/vars.yml'
+    env_vars_file = 'inventory/group_vars/{}/vars.yml'.format(envname)
+    global_secrets_file = 'inventory/group_vars/all/secrets.yml'
+    env_secrets_file = 'inventory/group_vars/{}/secrets.yml'.format(envname)
     password_file = '.vaultpassword-{envname}'.format(envname=envname)
 
     if args.newenv:
@@ -108,20 +106,15 @@ def main():
     playbook_options = [
         '--become',
         '-i', inventory_file,
-        '-e', 'tequila_dir=%s' % tequila_dir,
+        #'-e', 'tequila_dir=%s' % tequila_dir,   # Do we need this?
         '-e', 'env_name=%s' % envname,
         '-e', 'local_project_dir=%s' % os.getcwd(),
     ]
 
     if os.path.exists(password_file):
         playbook_options.extend(['--vault-password-file', password_file])
-        for secrets_file in [global_secrets_file, env_secrets_file]:
-            if os.path.exists(secrets_file):
-                playbook_options.extend(['-e', '@' + secrets_file])
-            else:
-                print("WARNING: Found {}, but no secrets file at {}".format(password_file, secrets_file))
     else:
-        print("WARNING: No {} file found, will not use any secrets.".format(password_file))
+        print("WARNING: No {} file found.  If Ansible vault complains, that\'s why.".format(password_file))
 
     command = ['ansible-playbook'] + playbook_options + ['%s/deploy.yml' % tequila_dir]
 

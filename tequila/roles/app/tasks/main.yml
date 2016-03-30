@@ -170,3 +170,10 @@
     app_path={{ source_dir }}
     virtualenv={{ venv_dir }}
   become_user: "{{ project_user }}"
+
+- name: copy shell script wrapper for manage.py
+  template: src=manage.sh
+            dest={{ root_dir }}/manage.sh
+            owner={{ project_name }}
+            group={{ project_name }}
+            mode=700

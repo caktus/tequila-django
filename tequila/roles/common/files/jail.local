@@ -1,6 +1,0 @@
-# Enable standard sections which are disabled by default
-[ssh-ddos]
-enabled = true
-
-[postfix]
-enabled  = true

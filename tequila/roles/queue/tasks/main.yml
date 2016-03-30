@@ -2,11 +2,25 @@
 - name: add rabbitmq repo
   apt_repository: repo="deb http://www.rabbitmq.com/debian/ testing main" state=present
 
+# Rabbitmq-server now needs a newer Erlang than the repos provide in
+# 12.04.  We can get that from erlang-solutions.com for 12.04, but not
+# anything older than that, so we only address 12.04 here.
+- name: add erlang repo
+  apt_repository: repo="deb http://packages.erlang-solutions.com/ubuntu {{ ansible_distribution_release }} contrib" state=present
+  when: ansible_distribution_release == 'precise'
+
 - name: add the rabbitmq repo key
   apt_key: url="http://www.rabbitmq.com/rabbitmq-signing-key-public.asc" state=present
 
+- name: add the erlang repo key
+  apt_key: url="http://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc" state=present
+  when: ansible_distribution_release == 'precise'
+
 - name: install rabbitmq-server
-  apt: name=rabbitmq-server state=present
+  apt: name={{ item }} state=latest
+  with_items:
+    - erlang-nox
+    - rabbitmq-server
 
 - name: ensure rabbitmq is running
   service: name=rabbitmq state=started

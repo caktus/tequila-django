@@ -157,6 +157,29 @@
     mode=0755
   become_user: "{{ project_user }}"
 
+# TODO: find out if the latest gunicorn is ok, or if we really do want
+# to pin to a version in the 19.1 series.
+- name: install gunicorn
+  pip: name=gunicorn
+       state=latest
+       virtualenv={{ venv_dir }}
+       virtualenv_python=/usr/bin/python{{ python_version }}
+  become_user: "{{ project_user }}"
+
+- name: configure gunicorn
+  template: src=gunicorn.conf
+            dest=/etc/supervisor/conf.d/{{ project_name }}-gunicorn.conf
+            owner=root
+            group=root
+            mode=0600
+  notify:
+    - reload supervisor
+
+- name: ensure gunicorn is running
+  supervisorctl: name={{ project_name }}-server state=started
+
+# TODO: let connections to 8000 through the firewall if we are load-balancing.
+
 - name: collectstatic
   django_manage: >
     command=collectstatic

@@ -133,6 +133,14 @@
        virtualenv_python=/usr/bin/python{{ python_version }}
   become_user: "{{ project_user }}"
 
+- name: optionally install newrelic
+  pip: name=newrelic
+       state=latest
+       virtualenv={{ venv_dir }}
+       virtualenv_python=/usr/bin/python{{ python_version }}
+  become_user: "{{ project_user }}"
+  when: use_newrelic
+
 #- name: set up the project python path
 #  copy: content="{{ source_dir }}"
 #        dest={{ venv_dir }}/lib/python{{ python_version }}/site-packages/project.pth

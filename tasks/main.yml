@@ -157,6 +157,25 @@
     mode=0755
   become_user: "{{ project_user }}"
 
+- name: configure celery and celery beat
+  template: src=celery.conf
+            dest=/etc/supervisor/conf.d/{{ project_name }}-celery-{{ item.name }}.conf
+            owner=root
+            group=root
+            mode=0600
+  with_items:
+    - { name: "default", command: "worker", flags: "--loglevel=INFO" }
+    - { name: "beat", command: "beat", flags: "--schedule={{ root_dir }}/celerybeat-schedule.db --pidfile={{ root_dir }}/celerybeat.pid --loglevel=INFO" }
+  notify:
+    - restart celery
+    - restart celery-beat
+
+- name: ensure celery is running
+  supervisorctl: name={{ project_name }}-celery-default state=started
+
+- name: ensure celery-beat is running
+  supervisorctl: name={{ project_name }}-celery-beat state=started
+
 # TODO: find out if the latest gunicorn is ok, or if we really do want
 # to pin to a version in the 19.1 series.
 - name: install gunicorn

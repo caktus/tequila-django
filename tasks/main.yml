@@ -184,6 +184,30 @@
 - name: ensure celery-beat is running
   supervisorctl: name={{ project_name }}-celery-beat state=started
 
+- name: add nodejs repo
+  apt_repository: repo="deb https://deb.nodesource.com/node_4.x {{ ansible_distribution_release }} main"
+                  state=present
+                  filename='nodesource'
+
+- name: add nodejs repo key
+  apt_key: data="{{ lookup('file', 'nodesource.pub') }}" state=present
+
+- name: ensure that nodejs-legacy is not installed
+  apt: pkg=nodejs-legacy state=absent
+
+- name: install nodejs
+  apt: pkg=nodejs state=latest
+
+- name: npm install packages
+  npm: path={{ source_dir }} state=latest
+  become_user: "{{ project_user }}"
+
+- name: npm run build
+  command: npm run build
+  args:
+    chdir: "{{ source_dir }}"
+  become_user: "{{ project_user }}"
+
 # TODO: find out if the latest gunicorn is ok, or if we really do want
 # to pin to a version in the 19.1 series.
 - name: install gunicorn
@@ -206,6 +230,14 @@
   supervisorctl: name={{ project_name }}-server state=started
 
 # TODO: let connections to 8000 through the firewall if we are load-balancing.
+
+- name: install less
+  npm: name=less version={{ less_version }} state=present
+
+- name: symlink less
+  file: src=/usr/bin/lessc
+        dest=/usr/local/bin/lessc
+        state=link
 
 - name: collectstatic
   django_manage: >

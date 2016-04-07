@@ -236,8 +236,8 @@
 
 # In order to allow gunicorn to find it.  See https://github.com/caktus/margarita/issues/75.
 - name: symlink less
-  file: src=/usr/bin/lessc
-        dest=/usr/local/bin/lessc
+  file: src=/usr/local/bin/lessc
+        dest=/usr/bin/lessc
         state=link
 
 - name: collectstatic

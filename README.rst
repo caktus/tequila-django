@@ -90,7 +90,7 @@ role:
 - ``log_dir`` **default:** ``"{{ root_dir }}/log"``
 - ``github_deploy_key`` **required**
 - ``repo`` **required:** dict containing url and branch
-- ``source_is_local`` **required**
+- ``source_is_local`` **default:** ``false``
 - ``local_project_dir`` **required if source_is_local**
 - ``requirements_name`` **default:** ``{'local': 'dev'}``
 - ``use_newrelic`` **default:** ``false``

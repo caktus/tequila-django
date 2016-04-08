@@ -14,5 +14,6 @@ static_dir: "{{ root_dir }}/public/static"
 media_dir: "{{ root_dir }}/public/media"
 log_dir: "{{ root_dir }}/log"
 use_newrelic: false
+source_is_local: false
 
 requirements_name: {'local': 'dev'}

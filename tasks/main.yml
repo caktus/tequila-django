@@ -128,7 +128,7 @@
   become_user: "{{ project_user }}"
 
 - name: pip install the project requirements
-  pip: requirements={{ source_dir }}/requirements/{{ requirements_name[env_name]|default('production') }}.txt
+  pip: requirements={{ requirements_file }}
        virtualenv={{ venv_dir }}
        virtualenv_python=/usr/bin/python{{ python_version }}
   become_user: "{{ project_user }}"

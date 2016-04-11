@@ -174,15 +174,20 @@
   with_items:
     - { name: "default", command: "worker", flags: "--loglevel=INFO" }
     - { name: "beat", command: "beat", flags: "--schedule={{ root_dir }}/celerybeat-schedule.db --pidfile={{ root_dir }}/celerybeat.pid --loglevel=INFO" }
-  notify:
-    - restart celery
-    - restart celery-beat
+  register: celery_conf
+
+- name: restart celery when the conf has changed
+  supervisorctl: name={{ project_name }}-celery-{{ item }} state=restarted
+  with_items:
+    - default
+    - beat
+  when: celery_conf|changed
 
 - name: ensure celery is running
-  supervisorctl: name={{ project_name }}-celery-default state=started
-
-- name: ensure celery-beat is running
-  supervisorctl: name={{ project_name }}-celery-beat state=started
+  supervisorctl: name={{ project_name }}-celery-{{ item }} state=started
+  with_items:
+    - default
+    - beat
 
 - name: add nodejs repo
   apt_repository: repo="deb https://deb.nodesource.com/node_4.x {{ ansible_distribution_release }} main"

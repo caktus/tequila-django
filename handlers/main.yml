@@ -4,9 +4,3 @@
 
 - name: update supervisor
   command: supervisorctl update
-
-- name: restart celery
-  supervisorctl: name={{ project_name }}-celery-default state=restarted
-
-- name: restart celery-beat
-  supervisorctl: name={{ project_name }}-celery-beat state=restarted

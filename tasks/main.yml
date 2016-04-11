@@ -187,7 +187,6 @@
 - name: add nodejs repo
   apt_repository: repo="deb https://deb.nodesource.com/node_4.x {{ ansible_distribution_release }} main"
                   state=present
-                  filename='nodesource'
 
 - name: add nodejs repo key
   apt_key: data="{{ lookup('file', 'nodesource.pub') }}" state=present

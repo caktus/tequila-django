@@ -67,6 +67,8 @@ role:
 - ``project_name`` **required**
 - ``env_name`` **required**
 - ``domain`` **required**
+- ``is_web`` **default:** ``false`` (**required:** one of ``is_web`` or ``is_worker`` set to ``true``)
+- ``is_worker`` **default:** ``false``
 - ``python_version`` **default:** ``"2.7"``
 - ``root_dir`` **default:** ``"/var/www/{{ project_name }}"``
 - ``source_dir`` **default:** ``"{{ root_dir }}/src"``

@@ -75,7 +75,9 @@ role:
 - ``venv_dir`` **default:** ``"{{ root_dir }}/env"``
 - ``ssh_dir`` **default:** ``"/home/{{ project_name }}/.ssh"``
 - ``requirements_file`` **default:** ``"{{ source_dir }}/requirements/{{ env_name }}.txt"``
-- ``new_relic_license_key`` **optional**
+- ``requirements_extra_args`` **default:** ``""``
+- ``use_newrelic`` **default:** ``false``
+- ``new_relic_license_key`` **required if use_newrelic is true**
 - ``gunicorn_num_workers`` **required**
 - ``project_user`` **default:** ``"{{ project_name }}"``
 - ``project_settings`` **default:** ``"{{ project_name }}.settings.deploy"``
@@ -95,5 +97,4 @@ role:
 - ``repo`` **required:** dict containing url and branch
 - ``source_is_local`` **default:** ``false``
 - ``local_project_dir`` **required if source_is_local**
-- ``use_newrelic`` **default:** ``false``
 - ``less_version`` **required**

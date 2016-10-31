@@ -96,6 +96,7 @@
        dest={{ source_dir }}
        version={{ repo.branch|default('master') }}
        force=yes
+       ssh_opts="-o StrictHostKeyChecking=no"
        key_file={{ github_key.dest|default(None) }}
   become_user: "{{ project_user }}"
   when: env_name != 'local' and not source_is_local
@@ -131,6 +132,7 @@
   pip: requirements={{ requirements_file }}
        virtualenv={{ venv_dir }}
        virtualenv_python=/usr/bin/python{{ python_version }}
+       extra_args={{ requirements_extra_args|default("") }}
   become_user: "{{ project_user }}"
 
 - name: optionally install newrelic

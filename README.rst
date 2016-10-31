@@ -11,7 +11,7 @@ primarily to support the `Caktus Django project template
 License
 -------
 
-These playbooks are released under the BSD License.  See the `LICENSE
+This Ansible role is released under the BSD License.  See the `LICENSE
 <https://github.com/caktus/tequila-django/blob/master/LICENSE>`_ file for
 more details.
 
@@ -36,7 +36,7 @@ Ansible where to install your roles (optionally, set the
 allow the roles to be installed into ``/etc/ansible/roles``) ::
 
     [defaults]
-    roles_path = roles/
+    roles_path = deployment/roles/
 
 Create a ``requirements.yml`` file in your project's deployment
 directory ::

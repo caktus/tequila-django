@@ -13,12 +13,12 @@
 - name: install nodejs
   apt: pkg=nodejs state=latest
 
-- name: check for the existence of package.json
-  stat: path={{ source_dir }}/package.json
+- name: check for build script in package.json
+  command: awk '/\<scripts\>/,/\<build\>/' {{ source_dir }}/package.json
   register: package_json
 
 - include: npm.yml
-  when: package_json.stat.exists == True
+  when: package_json.stdout != ""
 
 # TODO: find out if the latest gunicorn is ok, or if we really do want
 # to pin to a version in the 19.1 series.

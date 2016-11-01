@@ -38,6 +38,9 @@
   notify:
     - reload supervisor
 
+- name: reread supervisor conf files
+  command: supervisorctl reread
+
 - name: ensure gunicorn is running
   supervisorctl: name={{ project_name }}-server state=started
 

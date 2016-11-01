@@ -161,6 +161,13 @@
     mode=400
     src=envfile.j2
 
+- name: add the dotenv.sh helper script
+  copy: src=dotenv.sh
+        dest={{ source_dir }}/dotenv.sh
+        owner={{ project_user }}
+        group={{ project_user }}
+        mode=700
+
 - name: make manage.py executable (because django_manage expects it)
   file: >
     path={{ source_dir }}/manage.py

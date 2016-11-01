@@ -8,9 +8,14 @@ DB_PORT={{ db_port }}
 DB_USER={{ db_user }}
 DB_PASSWORD={{ db_password }}
 DOMAIN={{ domain }}
-{% if cache_host is defined %}CACHE_HOST={{ cache_host }}{% endif %}
-{% if broker_host is defined %}BROKER_HOST={{ broker_host }}{% endif %}
-{% if broker_password is defined %}BROKER_PASSWORD={{ broker_password }}{% endif %}
+{% if cache_host is defined %}CACHE_HOST={{ cache_host }}
+{% endif %}
+{% if broker_host is defined %}BROKER_HOST={{ broker_host }}
+{% endif %}
+{% if broker_password is defined %}BROKER_PASSWORD={{ broker_password }}
+{% endif %}
+{% if solr_host is defined %}SOLR_HOST={{ solr_host }}
+{% endif %}
 STATIC_DIR={{ static_dir }}
 MEDIA_DIR={{ media_dir }}
 LOG_DIR={{ log_dir }}

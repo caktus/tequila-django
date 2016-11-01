@@ -143,12 +143,11 @@
   become_user: "{{ project_user }}"
   when: use_newrelic
 
-#- name: set up the project python path
-#  copy: content="{{ source_dir }}"
-#        dest={{ venv_dir }}/lib/python{{ python_version }}/site-packages/project.pth
-#        user={{ project_user }}
-#        group={{ project_user }}
-#  become_user: "{{ project_user }}"
+- name: set up the project python path
+  copy: content="{{ source_dir }}"
+        dest={{ venv_dir }}/lib/python{{ python_version }}/site-packages/project.pth
+        owner={{ project_user }}
+        group={{ project_user }}
 
 # THIS needs to come AFTER syncing the source to the server,
 # since that might remove files like .env that weren't in the

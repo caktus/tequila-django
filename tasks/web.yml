@@ -57,6 +57,14 @@
     virtualenv={{ venv_dir }}
   become_user: "{{ project_user }}"
 
+- name: optional syncdb
+  django_manage: >
+    command=syncdb
+    app_path={{ source_dir }}
+    virtualenv={{ venv_dir }}
+  become_user: "{{ project_user }}"
+  ignore_errors: True
+
 - name: migrate
   django_manage: >
     command=migrate

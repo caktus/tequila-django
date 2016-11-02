@@ -35,11 +35,15 @@
             owner=root
             group=root
             mode=0600
-  notify:
-    - reload supervisor
+  register: supervisor_gunicorn
 
 - name: reread supervisor conf files
   command: supervisorctl reread
+  when: supervisor_gunicorn|changed
+
+- name: reload supervisord
+  command: supervisorctl reload
+  when: supervisor_gunicorn|changed
 
 - name: ensure gunicorn is running
   supervisorctl: name={{ project_name }}-server state=started

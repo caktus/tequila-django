@@ -1,24 +1,10 @@
 ---
-- name: add nodejs repo key
-  apt_key: data="{{ lookup('file', 'nodesource.pub') }}" state=present
-
-- name: add nodejs repo
-  apt_repository: repo="deb https://deb.nodesource.com/node_4.x {{ ansible_distribution_release }} main"
-                  state=present update_cache=yes
-  # Note: the update_cache above should only run if we changed the system's repository config
-
-- name: ensure that nodejs-legacy is not installed
-  apt: pkg=nodejs-legacy state=absent
-
-- name: install nodejs
-  apt: pkg=nodejs state=latest
-
-- name: check for build script in package.json
-  command: awk '/\<scripts\>/,/\<build\>/' {{ source_dir }}/package.json
+- name: check for a package.json file
+  stat: path={{ source_dir }}/package.json
   register: package_json
 
-- include: npm.yml
-  when: package_json.stdout != ""
+- include: nodejs.yml
+  when: package_json.stat.exists == True
 
 # TODO: find out if the latest gunicorn is ok, or if we really do want
 # to pin to a version in the 19.1 series.

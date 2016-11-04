@@ -90,6 +90,7 @@ role:
 - ``cache_host`` **optional**
 - ``broker_host`` **optional**
 - ``broker_password`` **optional**
+- ``celery_worker_extra_args`` **default:** ``"--loglevel=INFO"``
 - ``static_dir`` **default:** ``"{{ root_dir }}/public/static"``
 - ``media_dir`` **default:** ``"{{ root_dir }}/public/media"``
 - ``log_dir`` **default:** ``"{{ root_dir }}/log"``

@@ -8,12 +8,3 @@
   args:
     chdir: "{{ source_dir }}"
   become_user: "{{ project_user }}"
-
-- name: install less
-  npm: name=less version={{ less_version }} state=present
-
-# In order to allow gunicorn to find it.  See https://github.com/caktus/margarita/issues/75.
-- name: symlink less
-  file: src=/usr/local/bin/lessc
-        dest=/usr/bin/lessc
-        state=link

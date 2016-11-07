@@ -60,15 +60,17 @@
         owner=root
         group=root
         mode=644
-  notify:
-    - reload supervisor
+  register: supervisor_conf
 
 - name: symlink supervisor config to official location
   file: src=/etc/supervisor/supervisord.conf
         dest=/etc/supervisord.conf
         state=link
-  notify:
-    - reload supervisor
+  register: supervisor_conf_link
+
+- name: reload supervisor
+  service: name=supervisor state=reloaded
+  when: supervisor_conf|changed or supervisor_conf_link|changed
 
 - name: ensure supervisor is running
   service: name=supervisor state=started

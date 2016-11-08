@@ -68,6 +68,9 @@
         state=link
   register: supervisor_conf_link
 
+- name: enable supervisor
+  service: name=supervisor enabled=yes
+
 - name: reload supervisor
   service: name=supervisor state=reloaded
   when: supervisor_conf|changed or supervisor_conf_link|changed

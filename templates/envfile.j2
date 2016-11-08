@@ -4,10 +4,8 @@ PYTHONUNBUFFERED=1
 PATH=/usr/local/bin:$PATH
 DJANGO_SETTINGS_MODULE={{ project_settings }}
 SECRET_KEY={{ secret_key }}
-DB_NAME={{ db_name }}
 DB_HOST={{ db_host }}
 DB_PORT={{ db_port }}
-DB_USER={{ db_user }}
 DB_PASSWORD={{ db_password }}
 DOMAIN={{ domain }}
 {% if cache_host is defined %}CACHE_HOST={{ cache_host }}
@@ -18,6 +16,20 @@ DOMAIN={{ domain }}
 {% endif %}
 {% if solr_host is defined %}SOLR_HOST={{ solr_host }}
 {% endif %}
+
+{% if email_host is defined %}EMAIL_HOST={{ email_host }}
+{% endif %}
+{% if email_host_user is defined %}EMAIL_HOST_USER={{ email_host_user }}
+{% endif %}
+{% if email_host_password is defined %}EMAIL_HOST_PASSWORD={{ email_host_password }}
+{% endif %}
+{% if email_use_tls is defined %}EMAIL_USE_TLS={% if email_use_tls %}1{% else %}0{% endif %}
+{% endif %}
+{% if email_use_ssl is defined %}EMAIL_USE_SSL={% if email_use_ssl %}1{% else %}0{% endif %}
+{% endif %}
+{% if email_port is defined %}EMAIL_PORT={{ email_port }}
+{% endif %}
+
 STATIC_DIR={{ static_dir }}
 MEDIA_DIR={{ media_dir }}
 LOG_DIR={{ log_dir }}

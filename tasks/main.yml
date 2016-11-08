@@ -101,6 +101,8 @@
        ssh_opts="-o StrictHostKeyChecking=no"
        key_file={{ github_key.dest|default(None) }}
   become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
   when: env_name != 'local' and not source_is_local
 
 # NB! The trailing '/' on the 'src' parameter is significant, do not remove!
@@ -129,6 +131,8 @@
 - name: delete pyc files
   shell: find {{ source_dir }} -name '*.pyc' -delete
   become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
 
 - name: clear out leftover build cruft from the project requirements
   file: path={{ venv_dir }}/build state=absent
@@ -139,6 +143,8 @@
        virtualenv_python=/usr/bin/python{{ python_version }}
        extra_args={{ requirements_extra_args|default("") }}
   become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
 
 - name: optionally install newrelic
   pip: name=newrelic
@@ -146,6 +152,8 @@
        virtualenv={{ venv_dir }}
        virtualenv_python=/usr/bin/python{{ python_version }}
   become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
   when: use_newrelic
 
 - name: set up the project python path
@@ -177,6 +185,8 @@
     path={{ source_dir }}/manage.py
     mode=0755
   become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
 
 - name: django server is either a web server or a worker
   assert: { that: "is_web or is_worker" }

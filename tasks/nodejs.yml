@@ -16,6 +16,8 @@
 - name: npm install packages
   npm: path={{ source_dir }} state=latest
   become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
 
 - name: check for build script in package.json
   command: awk '/\<scripts\>/,/\<build\>/' {{ source_dir }}/package.json
@@ -26,4 +28,6 @@
   args:
     chdir: "{{ source_dir }}"
   become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
   when: build_script.stdout != ""

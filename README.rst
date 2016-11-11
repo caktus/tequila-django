@@ -79,6 +79,7 @@ role:
 - ``use_newrelic`` **default:** ``false``
 - ``new_relic_license_key`` **required if use_newrelic is true**
 - ``gunicorn_num_workers`` **required**
+- ``gunicorn_num_threads`` **optional** (note: gunicorn sets this at ``1`` if ``--threads=...`` is not given)
 - ``project_user`` **default:** ``"{{ project_name }}"``
 - ``project_settings`` **default:** ``"{{ project_name }}.settings.deploy"``
 - ``secret_key`` **required**

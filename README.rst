@@ -99,4 +99,10 @@ role:
 - ``repo`` **required:** dict containing url and branch
 - ``source_is_local`` **default:** ``false``
 - ``local_project_dir`` **required if source_is_local**
-- ``less_version`` **required**
+- ``global_npm_installs`` **default:** empty list
+
+The ``global_npm_installs`` variable is a list of dicts, with required
+key ``name`` for the package name, and optional key ``version`` for
+the desired version to install.  This is needed for the less or sass
+packages, to make them available where supervisord and gunicorn can
+find them.

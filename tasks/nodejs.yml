@@ -13,6 +13,10 @@
 - name: install nodejs
   apt: pkg=nodejs state=latest
 
+- name: install global npm packages
+  npm: name={{ item.name }} version={{ item.version|default(omit) }} global=yes
+  with_items: "{{ global_npm_installs|default([]) }}"
+
 - name: npm install packages
   npm: path={{ source_dir }} state=latest
   become_user: "{{ project_user }}"

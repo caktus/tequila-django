@@ -16,6 +16,8 @@ DOMAIN={{ domain }}
 {% endif %}
 {% if solr_host is defined %}SOLR_HOST={{ solr_host }}
 {% endif %}
+{% if solr_cores is defined %}SOLR_CORE={{ solr_cores.0 }}
+{% endif %}
 
 {% if email_host is defined %}EMAIL_HOST={{ email_host }}
 {% endif %}

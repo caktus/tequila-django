@@ -85,7 +85,7 @@
         group={{ project_user }}
         mode=600
   register: github_key
-  when: github_deploy_key is defined
+  when: github_deploy_key|default('')
 
 # TODO: come up with a safer way of exposing the local repo
 # - name: rsync project source to /vagrant/

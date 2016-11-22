@@ -95,9 +95,9 @@ role:
 - ``static_dir`` **default:** ``"{{ root_dir }}/public/static"``
 - ``media_dir`` **default:** ``"{{ root_dir }}/public/media"``
 - ``log_dir`` **default:** ``"{{ root_dir }}/log"``
-- ``github_deploy_key`` **required**
 - ``repo`` **required:** dict containing url and branch
 - ``source_is_local`` **default:** ``false``
+- ``github_deploy_key`` **required if source_is_local is false**
 - ``local_project_dir`` **required if source_is_local**
 - ``global_npm_installs`` **default:** empty list
 

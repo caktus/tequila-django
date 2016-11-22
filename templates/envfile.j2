@@ -19,19 +19,10 @@ DOMAIN={{ domain }}
 {% if solr_cores is defined %}SOLR_CORE={{ solr_cores.0 }}
 {% endif %}
 
-{% if email_host is defined %}EMAIL_HOST={{ email_host }}
-{% endif %}
-{% if email_host_user is defined %}EMAIL_HOST_USER={{ email_host_user }}
-{% endif %}
-{% if email_host_password is defined %}EMAIL_HOST_PASSWORD={{ email_host_password }}
-{% endif %}
-{% if email_use_tls is defined %}EMAIL_USE_TLS={% if email_use_tls %}1{% else %}0{% endif %}
-{% endif %}
-{% if email_use_ssl is defined %}EMAIL_USE_SSL={% if email_use_ssl %}1{% else %}0{% endif %}
-{% endif %}
-{% if email_port is defined %}EMAIL_PORT={{ email_port }}
-{% endif %}
-
 STATIC_DIR={{ static_dir }}
 MEDIA_DIR={{ media_dir }}
 LOG_DIR={{ log_dir }}
+
+{% for key, value in extra_env.items() %}
+{{ key }}={{ value }}
+{% endfor %}

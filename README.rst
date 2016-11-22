@@ -100,9 +100,14 @@ role:
 - ``github_deploy_key`` **required if source_is_local is false**
 - ``local_project_dir`` **required if source_is_local**
 - ``global_npm_installs`` **default:** empty list
+- ``extra_env`` **default:** empty dict
 
 The ``global_npm_installs`` variable is a list of dicts, with required
 key ``name`` for the package name, and optional key ``version`` for
 the desired version to install.  This is needed for the less or sass
 packages, to make them available where supervisord and gunicorn can
 find them.
+
+The ``extra_env`` variable is a dict of keys and values that is
+desired to be injected into the environment as variables, via the
+``envfile.j2`` template.

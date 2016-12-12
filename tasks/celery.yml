@@ -8,17 +8,7 @@
   with_items:
     - { name: "default", command: "worker", flags: "{{ celery_worker_extra_args|default('--loglevel=INFO') }}" }
     - { name: "beat", command: "beat", flags: "--schedule={{ root_dir }}/celerybeat-schedule.db --pidfile={{ root_dir }}/celerybeat.pid --loglevel=INFO" }
-  register: celery_conf
-
-- name: restart celery when the conf has changed
-  supervisorctl: name={{ project_name }}-celery-{{ item }} state=restarted
-  with_items:
-    - default
-    - beat
-  when: celery_conf|changed
-
-- name: ensure celery is running
-  supervisorctl: name={{ project_name }}-celery-{{ item }} state=started
-  with_items:
-    - default
-    - beat
+  notify:
+    - reread supervisor managed app files
+    - restart supervisor managed apps that updated confs
+    - ensure celery is running

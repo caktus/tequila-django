@@ -16,6 +16,10 @@
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true
+  notify:
+    - reread supervisor managed app files
+    - restart supervisor managed apps that updated confs
+    - ensure gunicorn is running
 
 - name: configure gunicorn
   template: src=gunicorn.conf
@@ -23,18 +27,10 @@
             owner=root
             group=root
             mode=0600
-  register: supervisor_gunicorn
-
-- name: reread supervisor conf files
-  command: supervisorctl reread
-  when: supervisor_gunicorn|changed
-
-- name: reload supervisord
-  command: supervisorctl reload
-  when: supervisor_gunicorn|changed
-
-- name: ensure gunicorn is running
-  supervisorctl: name={{ project_name }}-server state=started
+  notify:
+    - reread supervisor managed app files
+    - restart supervisor managed apps that updated confs
+    - ensure gunicorn is running
 
 # TODO: let connections to 8000 through the firewall if we are load-balancing.
 

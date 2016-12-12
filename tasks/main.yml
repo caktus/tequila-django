@@ -60,23 +60,18 @@
         owner=root
         group=root
         mode=644
-  register: supervisor_conf
+  notify:
+    - restart supervisord
 
 - name: symlink supervisor config to official location
   file: src=/etc/supervisor/supervisord.conf
         dest=/etc/supervisord.conf
         state=link
-  register: supervisor_conf_link
+  notify:
+    - restart supervisord
 
 - name: enable supervisor
   service: name=supervisor enabled=yes
-
-- name: reload supervisor
-  service: name=supervisor state=reloaded
-  when: supervisor_conf|changed or supervisor_conf_link|changed
-
-- name: ensure supervisor is running
-  service: name=supervisor state=started
 
 - name: upload github key
   copy: content={{ github_deploy_key }}
@@ -107,6 +102,9 @@
   vars:
     ansible_ssh_pipelining: true
   when: env_name != 'local' and not source_is_local
+  notify:
+    - reread supervisor managed app files
+    - restart supervisor managed apps that updated confs
 
 # NB! The trailing '/' on the 'src' parameter is significant, do not remove!
 # (see the docs: http://docs.ansible.com/ansible/synchronize_module.html)
@@ -123,6 +121,9 @@
       - "--exclude=*.pyc"
   become: no  # stops synchronize trying to sudo locally
   when: source_is_local
+  notify:
+    - reread supervisor managed app files
+    - restart supervisor managed apps that updated confs
 
 - name: force proper ownership of source
   file:
@@ -148,6 +149,9 @@
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true
+  notify:
+    - reread supervisor managed app files
+    - restart supervisor managed apps that updated confs
 
 - name: optionally install newrelic
   pip: name=newrelic

@@ -104,7 +104,7 @@
   when: env_name != 'local' and not source_is_local
   notify:
     - reread supervisor managed app files
-    - restart supervisor managed apps that updated confs
+    - restart supervisord
 
 # NB! The trailing '/' on the 'src' parameter is significant, do not remove!
 # (see the docs: http://docs.ansible.com/ansible/synchronize_module.html)
@@ -123,7 +123,7 @@
   when: source_is_local
   notify:
     - reread supervisor managed app files
-    - restart supervisor managed apps that updated confs
+    - restart supervisord
 
 - name: force proper ownership of source
   file:
@@ -151,7 +151,7 @@
     ansible_ssh_pipelining: true
   notify:
     - reread supervisor managed app files
-    - restart supervisor managed apps that updated confs
+    - restart supervisord
 
 - name: optionally install newrelic
   pip: name=newrelic

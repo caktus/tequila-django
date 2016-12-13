@@ -1,13 +1,13 @@
 ---
-- name: restart supervisord
-  service: name=supervisor state=restarted
-
 # updates the changes in conf files, but does not restart the apps
 - name: reread supervisor managed app files
   command: supervisorctl reread
 
 - name: restart supervisor managed apps that updated confs
   command: supervisorctl update
+
+- name: restart supervisord
+  service: name=supervisor state=restarted
 
 - name: ensure gunicorn is running
   supervisorctl: name={{ project_name }}-server state=started

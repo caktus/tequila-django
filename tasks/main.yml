@@ -103,7 +103,6 @@
     ansible_ssh_pipelining: true
   when: env_name != 'local' and not source_is_local
   notify:
-    - reread supervisor managed app files
     - restart supervisord
 
 # NB! The trailing '/' on the 'src' parameter is significant, do not remove!
@@ -122,7 +121,6 @@
   become: no  # stops synchronize trying to sudo locally
   when: source_is_local
   notify:
-    - reread supervisor managed app files
     - restart supervisord
 
 - name: force proper ownership of source
@@ -150,7 +148,6 @@
   vars:
     ansible_ssh_pipelining: true
   notify:
-    - reread supervisor managed app files
     - restart supervisord
 
 - name: optionally install newrelic

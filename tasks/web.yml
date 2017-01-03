@@ -17,8 +17,7 @@
   vars:
     ansible_ssh_pipelining: true
   notify:
-    - reread supervisor managed app files
-    - restart supervisor managed apps that updated confs
+    - restart the supervisord program group
     - ensure gunicorn is running
 
 - name: configure gunicorn
@@ -28,8 +27,7 @@
             group=root
             mode=0600
   notify:
-    - reread supervisor managed app files
-    - restart supervisor managed apps that updated confs
+    - restart the supervisord program group
     - ensure gunicorn is running
 
 # TODO: let connections to 8000 through the firewall if we are load-balancing.

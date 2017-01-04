@@ -8,6 +8,15 @@
   with_items:
     - { name: "default", command: "worker", flags: "{{ celery_worker_extra_args|default('--loglevel=INFO') }}" }
     - { name: "beat", command: "beat", flags: "--schedule={{ root_dir }}/celerybeat-schedule.db --pidfile={{ root_dir }}/celerybeat.pid --loglevel=INFO" }
-  notify:
-    - restart the supervisord program group
-    - ensure celery is running
+
+- name: ensure celery is present
+  supervisorctl: name={{ project_name }}-celery-{{ item }} state=present
+  with_items:
+    - default
+    - beat
+
+- name: restart celery
+  supervisorctl: name={{ project_name }}-celery-{{ item }} state=restarted
+  with_items:
+    - default
+    - beat

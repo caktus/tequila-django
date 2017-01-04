@@ -16,9 +16,6 @@
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true
-  notify:
-    - restart the supervisord program group
-    - ensure gunicorn is running
 
 - name: configure gunicorn
   template: src=gunicorn.conf
@@ -26,9 +23,12 @@
             owner=root
             group=root
             mode=0600
-  notify:
-    - restart the supervisord program group
-    - ensure gunicorn is running
+
+- name: ensure gunicorn is present
+  supervisorctl: name={{ project_name }}-server state=present
+
+- name: restart gunicorn
+  supervisorctl: name={{ project_name }}-server state=restarted
 
 # TODO: let connections to 8000 through the firewall if we are load-balancing.
 

@@ -60,6 +60,7 @@
         owner=root
         group=root
         mode=644
+  register: supervisord_conf
 
 - name: symlink supervisor config to official location
   file: src=/etc/supervisor/supervisord.conf
@@ -68,6 +69,10 @@
 
 - name: enable supervisor
   service: name=supervisor enabled=yes
+
+- name: restart supervisord
+  service: name=supervisor state=restarted
+  when: supervisord_conf|changed
 
 - name: upload github key
   copy: content={{ github_deploy_key }}

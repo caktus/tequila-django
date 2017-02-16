@@ -1,7 +1,4 @@
 ---
-- name: add the deadsnakes ppa
-  apt_repository: repo="ppa:fkrull/deadsnakes" state=present
-
 - name: install app packages
   apt: pkg={{ item }} state=present update_cache=yes cache_valid_time=3600
   with_items:

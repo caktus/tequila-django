@@ -27,9 +27,6 @@
 - name: ensure gunicorn is present
   supervisorctl: name={{ project_name }}-server state=present
 
-- name: restart gunicorn
-  supervisorctl: name={{ project_name }}-server state=restarted
-
 # TODO: let connections to 8000 through the firewall if we are load-balancing.
 
 - name: collectstatic
@@ -49,6 +46,9 @@
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true
+
+- name: restart gunicorn
+  supervisorctl: name={{ project_name }}-server state=restarted
 
 - name: copy shell script wrapper for manage.py
   template: src=manage.sh

@@ -1,0 +1,58 @@
+---
+- name: check for a package.json file
+  stat: path={{ source_dir }}/package.json
+  register: package_json
+
+- include: nodejs.yml
+  when: package_json.stat.exists == True
+
+- name: install gunicorn
+  pip:
+    name: gunicorn
+    state: present
+    version: "{{ gunicorn_version|default(omit) }}"
+    virtualenv: "{{ venv_dir }}"
+    virtualenv_python: /usr/bin/python{{ python_version }}
+  become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
+
+- name: configure gunicorn
+  template: src=gunicorn.conf
+            dest=/etc/supervisor/conf.d/{{ project_name }}-gunicorn.conf
+            owner=root
+            group=root
+            mode=0600
+
+- name: ensure gunicorn is present
+  supervisorctl: name={{ project_name }}-server state=present
+
+# TODO: let connections to 8000 through the firewall if we are load-balancing.
+
+- name: collectstatic
+  django_manage: >
+    command=collectstatic
+    app_path={{ source_dir }}
+    virtualenv={{ venv_dir }}
+  become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
+
+- name: migrate
+  django_manage: >
+    command=migrate
+    app_path={{ source_dir }}
+    virtualenv={{ venv_dir }}
+  become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
+
+- name: restart gunicorn
+  supervisorctl: name={{ project_name }}-server state=restarted
+
+- name: copy shell script wrapper for manage.py
+  template: src=manage.sh
+            dest={{ root_dir }}/manage.sh
+            owner={{ project_name }}
+            group={{ project_name }}
+            mode=700

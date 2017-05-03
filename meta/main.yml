@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: Caktus Consulting Group, LLC
+  description: Django project deployment -- django
+  company: Caktus Consulting Group, LLC
+  license: BSD
+  min_ansible_version: 1.9
+  platforms:
+    - name: Ubuntu
+      versions: all
+  galaxy_tags:
+    - django
+    - installer
+    - web
+dependencies: []

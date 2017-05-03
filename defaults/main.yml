@@ -1,0 +1,21 @@
+---
+python_version: "2.7"
+root_dir: "/var/www/{{ project_name }}"
+source_dir: "{{ root_dir }}/src"
+venv_dir: "{{ root_dir }}/env"
+ssh_dir: "/home/{{ project_name }}/.ssh"
+requirements_file: "{{ source_dir }}/requirements/{{ env_name }}.txt"
+project_user: "{{ project_name }}"
+project_settings: "{{ project_name }}.settings.deploy"
+db_name: "{{ project_name }}_{{ env_name }}"
+db_user: "{{ project_name }}_{{ env_name }}"
+db_host: 'localhost'
+db_port: 5432
+static_dir: "{{ root_dir }}/public/static"
+media_dir: "{{ root_dir }}/public/media"
+log_dir: "{{ root_dir }}/log"
+use_newrelic: false
+source_is_local: false
+is_web: false
+is_worker: false
+extra_env: {}

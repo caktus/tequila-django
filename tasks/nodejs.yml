@@ -1,0 +1,37 @@
+---
+- name: add nodejs repo key
+  apt_key: data="{{ lookup('file', 'nodesource.pub') }}" state=present
+
+- name: add nodejs repo
+  apt_repository: repo="deb https://deb.nodesource.com/node_4.x {{ ansible_distribution_release }} main"
+                  state=present update_cache=yes
+  # Note: the update_cache above should only run if we changed the system's repository config
+
+- name: ensure that nodejs-legacy is not installed
+  apt: pkg=nodejs-legacy state=absent
+
+- name: install nodejs
+  apt: pkg=nodejs state=latest
+
+- name: install global npm packages
+  npm: name={{ item.name }} version={{ item.version|default(omit) }} global=yes
+  with_items: "{{ global_npm_installs|default([]) }}"
+
+- name: npm install packages
+  npm: path={{ source_dir }} state=latest
+  become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
+
+- name: check for build script in package.json
+  command: awk '/\<scripts\>/,/\<build\>/' {{ source_dir }}/package.json
+  register: build_script
+
+- name: npm run build
+  command: npm run build
+  args:
+    chdir: "{{ source_dir }}"
+  become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
+  when: build_script.stdout != ""

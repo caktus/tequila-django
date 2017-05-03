@@ -1,0 +1,184 @@
+---
+- name: install app packages
+  apt: pkg={{ item }} state=present update_cache=yes cache_valid_time=3600
+  with_items:
+    - python-pip
+    - libpq-dev
+    - libev-dev
+    - libevent-dev
+    - libmemcached-dev
+    - libjpeg8
+    - libjpeg8-dev
+    - libfreetype6
+    - libfreetype6-dev
+    - zlib1g
+    - zlib1g-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - ghostscript
+    - libpython{{ python_version }}
+    - libpython{{ python_version }}-dev
+    - python{{ python_version }}
+    - python{{ python_version }}-dev
+    - postfix
+    - git-core
+    - python-virtualenv
+
+- name: ensure postfix is running
+  service: name=postfix state=started
+
+- name: remove supervisor system package
+  apt: pkg=supervisor state=absent
+
+# pip install to obtain a consistent version number
+- name: pip install supervisor
+  pip: name=supervisor version=3.0
+
+- name: upload supervisor init script
+  copy: src=service.sh
+        dest=/etc/init.d/supervisor
+        owner=root
+        group=root
+        mode=744
+
+- name: create directory paths for supervisor
+  file: path={{ item }}
+        state=directory
+        owner=root
+        group=root
+        mode=744
+  with_items:
+    - /var/log/supervisor
+    - /etc/supervisor/conf.d
+
+- name: upload supervisor config file
+  copy: src=supervisord.conf
+        dest=/etc/supervisor/supervisord.conf
+        owner=root
+        group=root
+        mode=644
+  register: supervisord_conf
+
+- name: symlink supervisor config to official location
+  file: src=/etc/supervisor/supervisord.conf
+        dest=/etc/supervisord.conf
+        state=link
+
+- name: enable supervisor
+  service: name=supervisor enabled=yes
+
+- name: restart supervisord
+  service: name=supervisor state=restarted
+  when: supervisord_conf|changed
+
+- name: upload github key
+  copy: content={{ github_deploy_key }}
+        dest={{ ssh_dir }}/github
+        owner={{ project_user }}
+        group={{ project_user }}
+        mode=600
+  register: github_key
+  when: github_deploy_key|default('')
+
+- name: checkout latest project source
+  git: repo={{ repo.url }}
+       dest={{ source_dir }}
+       version={{ repo.branch|default('master') }}
+       force=yes
+       ssh_opts="-o StrictHostKeyChecking=no"
+       key_file={{ github_key.dest|default(None) }}
+  become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
+  when: env_name != 'local' and not source_is_local
+
+# NB! The trailing '/' on the 'src' parameter is significant, do not remove!
+# (see the docs: http://docs.ansible.com/ansible/synchronize_module.html)
+- name: sync source from local directory
+  synchronize:
+    dest: "{{ source_dir }}"
+    src: "{{ local_project_dir }}/"
+    delete: yes
+    rsync_path: "sudo rsync"  # Use sudo on the remote system
+    recursive: true
+    rsync_opts:
+      - "--exclude=.git"
+      - "--exclude=*.pyc"
+  become: no  # stops synchronize trying to sudo locally
+  when: source_is_local
+
+- name: force proper ownership of source
+  file:
+    owner: "{{ project_user }}"
+    group: "{{ project_user }}"
+    path: "{{ source_dir }}"
+    recurse: yes
+
+- name: delete pyc files
+  shell: find {{ source_dir }} -name '*.pyc' -delete
+  become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
+
+- name: clear out leftover build cruft from the project requirements
+  file: path={{ venv_dir }}/build state=absent
+
+- name: pip install the project requirements
+  pip: requirements={{ requirements_file }}
+       virtualenv={{ venv_dir }}
+       virtualenv_python=/usr/bin/python{{ python_version }}
+       extra_args={{ requirements_extra_args|default("") }}
+  become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
+
+- name: optionally install newrelic
+  pip: name=newrelic
+       state=latest
+       virtualenv={{ venv_dir }}
+       virtualenv_python=/usr/bin/python{{ python_version }}
+  become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
+  when: use_newrelic
+
+- name: set up the project python path
+  copy: content="{{ source_dir }}"
+        dest={{ venv_dir }}/lib/python{{ python_version }}/site-packages/project.pth
+        owner={{ project_user }}
+        group={{ project_user }}
+
+# THIS needs to come AFTER syncing the source to the server,
+# since that might remove files like .env that weren't in the
+# source directory locally.
+- name: create/update .env file
+  template: >
+    dest={{ source_dir }}/.env
+    owner={{ project_user }}
+    group={{ project_user }}
+    mode=400
+    src=envfile.j2
+
+- name: add the dotenv.sh helper script
+  copy: src=dotenv.sh
+        dest={{ source_dir }}/dotenv.sh
+        owner={{ project_user }}
+        group={{ project_user }}
+        mode=700
+
+- name: make manage.py executable (because django_manage expects it)
+  file: >
+    path={{ source_dir }}/manage.py
+    mode=0755
+  become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
+
+- name: django server is either a web server or a worker
+  assert: { that: "is_web or is_worker" }
+
+- include: celery.yml
+  when: is_worker
+
+- include: web.yml
+  when: is_web

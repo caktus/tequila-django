@@ -1,6 +1,0 @@
----
-- name: reload supervisor
-  service: name=supervisor state=reloaded
-
-- name: update supervisor
-  command: supervisorctl update

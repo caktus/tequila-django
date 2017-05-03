@@ -1,0 +1,30 @@
+{# template for .env file #}
+ENVIRONMENT={{ env_name }}
+PYTHONUNBUFFERED=1
+PATH=/usr/local/bin:$PATH
+DJANGO_SETTINGS_MODULE={{ project_settings }}
+SECRET_KEY={{ secret_key }}
+DB_NAME={{ db_name }}
+DB_USER={{ db_user }}
+DB_HOST={{ db_host }}
+DB_PORT={{ db_port }}
+DB_PASSWORD={{ db_password }}
+DOMAIN={{ domain }}
+{% if cache_host is defined %}CACHE_HOST={{ cache_host }}
+{% endif %}
+{% if broker_host is defined %}BROKER_HOST={{ broker_host }}
+{% endif %}
+{% if broker_password is defined %}BROKER_PASSWORD={{ broker_password }}
+{% endif %}
+{% if solr_host is defined %}SOLR_HOST={{ solr_host }}
+{% endif %}
+{% if solr_cores is defined %}SOLR_CORE={{ solr_cores.0 }}
+{% endif %}
+
+STATIC_DIR={{ static_dir }}
+MEDIA_DIR={{ media_dir }}
+LOG_DIR={{ log_dir }}
+
+{% for key, value in extra_env.items() %}
+{{ key }}={{ value }}
+{% endfor %}

@@ -80,15 +80,6 @@
   register: github_key
   when: github_deploy_key|default('')
 
-# TODO: come up with a safer way of exposing the local repo
-# - name: rsync project source to /vagrant/
-#   synchronize: >-
-#     src={{ source_dir }}
-#     dest=/vagrant/
-#     recursive=yes
-#     delete=yes
-#   when: env_name == 'local'
-
 - name: checkout latest project source
   git: repo={{ repo.url }}
        dest={{ source_dir }}
@@ -109,7 +100,6 @@
     src: "{{ local_project_dir }}/"
     delete: yes
     rsync_path: "sudo rsync"  # Use sudo on the remote system
-#    set_remote_user: true
     recursive: true
     rsync_opts:
       - "--exclude=.git"

@@ -50,6 +50,11 @@
             group={{ project_name }}
             mode=700
 
+- name: change ownership of node modules
+  command: /bin/true
+  notify: chown node_modules
+  when: package_json.stat.exists == True and build_script.stdout != ""
+
 - name: rebuild node modules
   command: /bin/true
   notify: npm run build

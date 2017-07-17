@@ -1,4 +1,11 @@
 ---
+- name: chown node_modules
+  file:
+    owner: "{{ project_user }}"
+    group: "{{ project_user }}"
+    path: "{{ source_dir }}/node_modules"
+    recurse: yes
+
 - name: npm run build
   command: npm run build
   args:

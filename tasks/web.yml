@@ -40,24 +40,6 @@
   vars:
     ansible_ssh_pipelining: true
 
-- name: check for a package.json file
-  stat: path={{ source_dir }}/package.json
-  register: package_json
-
-- name: check for build script in package.json
-  command: awk '/\<scripts\>/,/\<build\>/' {{ source_dir }}/package.json
-  register: build_script
-  when: package_json.stat.exists == True
-
-- name: npm run build
-  command: npm run build
-  args:
-    chdir: "{{ source_dir }}"
-  become_user: "{{ project_user }}"
-  vars:
-    ansible_ssh_pipelining: true
-  when: package_json.stat.exists == True and build_script.stdout != ""
-
 - name: restart gunicorn
   supervisorctl: name={{ project_name }}-server state=restarted
 
@@ -67,3 +49,8 @@
             owner={{ project_name }}
             group={{ project_name }}
             mode=700
+
+- name: rebuild node modules
+  command: /bin/true
+  notify: npm run build
+  when: package_json.stat.exists == True and build_script.stdout != ""

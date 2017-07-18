@@ -120,6 +120,15 @@
   vars:
     ansible_ssh_pipelining: true
 
+- name: check for a package.json file
+  stat: path={{ source_dir }}/package.json
+  register: package_json
+
+- name: check for build script in package.json
+  command: awk '/\<scripts\>/,/\<build\>/' {{ source_dir }}/package.json
+  register: build_script
+  when: package_json.stat.exists == True
+
 - name: clear out leftover build cruft from the project requirements
   file: path={{ venv_dir }}/build state=absent
 

@@ -39,12 +39,22 @@ allow the roles to be installed into ``/etc/ansible/roles``) ::
     roles_path = deployment/roles/
 
 Create a ``requirements.yml`` file in your project's deployment
-directory ::
+directory.  It is recommended to include tequila-common, which sets up
+the project directory structure and users, and also geerlingguy/nodejs
+to install nodejs and any front-end packages that your project
+requires ::
 
     ---
     # file: deployment/requirements.yml
+    - src: geerlingguy.nodejs
+      version: 4.1.1
+      name: nodejs
+
+    - src: https://github.com/caktus/tequila-common
+      version: v0.8.0
+
     - src: https://github.com/caktus/tequila-django
-      version: 0.1.0
+      version: 0.8.2
 
 Run ``ansible-galaxy`` with your requirements file ::
 
@@ -100,15 +110,12 @@ role:
 - ``source_is_local`` **default:** ``false``
 - ``github_deploy_key`` **required if source_is_local is false**
 - ``local_project_dir`` **required if source_is_local**
-- ``global_npm_installs`` **default:** empty list
 - ``extra_env`` **default:** empty dict
-
-The ``global_npm_installs`` variable is a list of dicts, with required
-key ``name`` for the package name, and optional key ``version`` for
-the desired version to install.  This is needed for the less or sass
-packages, to make them available where supervisord and gunicorn can
-find them.
 
 The ``extra_env`` variable is a dict of keys and values that is
 desired to be injected into the environment as variables, via the
 ``envfile.j2`` template.
+
+See `geerlingguy/nodejs
+<https://github.com/geerlingguy/ansible-role-nodejs>`_ for the
+expected Ansible configuration variables for that role.

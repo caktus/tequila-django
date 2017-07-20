@@ -22,20 +22,11 @@
 
 # TODO: let connections to 8000 through the firewall if we are load-balancing.
 
-- name: collectstatic
-  django_manage: >
-    command=collectstatic
-    app_path={{ source_dir }}
-    virtualenv={{ venv_dir }}
-  become_user: "{{ project_user }}"
-  vars:
-    ansible_ssh_pipelining: true
-
 - name: migrate
-  django_manage: >
-    command=migrate
-    app_path={{ source_dir }}
-    virtualenv={{ venv_dir }}
+  django_manage:
+    command: migrate
+    app_path: "{{ source_dir }}"
+    virtualenv: "{{ venv_dir }}"
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true
@@ -50,12 +41,20 @@
             group={{ project_name }}
             mode=700
 
-- name: change ownership of node modules
+# Note: we want the npm build and collectstatic steps to happen at the
+# very end of the roles section for the current playbook, so that
+# they'll still happen in the order needed even if the playbook has a
+# 3rd-party role after tequila-django, e.g. geerlingguy/nodejs.  Thus,
+# they are moved out into handlers.
+
+- name: trigger build of npm artifacts
   command: /bin/true
-  notify: chown node_modules
+  notify:
+    - chown node_modules
+    - npm run build
   when: package_json.stat.exists == True and build_script.stdout != ""
 
-- name: rebuild node modules
+- name: trigger collectstatic
   command: /bin/true
-  notify: npm run build
-  when: package_json.stat.exists == True and build_script.stdout != ""
+  notify:
+    - collectstatic

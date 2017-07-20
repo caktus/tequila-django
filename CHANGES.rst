@@ -3,6 +3,14 @@ Tequila-django
 
 Changes
 
+v 0.9.1 on July 20, 2017
+------------------------
+
+* Convert the collectstatic task into a handler.  This is needed so
+  that it happens after the ``npm run build`` step, so that the files
+  generated from that are included.
+
+
 v 0.9.0 on July 18, 2017
 ------------------------
 

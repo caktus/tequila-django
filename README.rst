@@ -119,13 +119,15 @@ desired to be injected into the environment as variables, via the
 Optimizations
 -------------
 
-If your staging and deployment environments do not use `requiretty` in
-`/etc/sudoers` you can turn on [SSH pipelining](http://docs.ansible.com/ansible/latest/intro_configuration.html#pipelining)
-for all ansible commands. If this is the case, add the following to your project
-`ansible.cfg` file:
+You can turn on [SSH pipelining](http://docs.ansible.com/ansible/latest/intro_configuration.html#pipelining)
+to speed up ansible commands (by minimizing SSH operations). Add the following
+to your project's `ansible.cfg` file:
 
     [ssh_connection]
     pipelining = True
+
+**Warning** this will cause deployments to break if `securetty` is used in your server's
+`/etc/sudoers` file.
 
 Notes
 -----

@@ -3,6 +3,13 @@ Tequila-django
 
 Changes
 
+v 0.9.2 on Aug 17, 2017
+-----------------------
+
+* Adjustment to the Django migrate task to improve its speed, and a
+  suggestion for a project-wide setting to improve it further.
+
+
 v 0.9.1 on July 20, 2017
 ------------------------
 

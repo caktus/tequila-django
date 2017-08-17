@@ -116,6 +116,22 @@ The ``extra_env`` variable is a dict of keys and values that is
 desired to be injected into the environment as variables, via the
 ``envfile.j2`` template.
 
+Optimizations
+-------------
+
+You can turn on [SSH pipelining](http://docs.ansible.com/ansible/latest/intro_configuration.html#pipelining)
+to speed up ansible commands (by minimizing SSH operations). Add the following
+to your project's `ansible.cfg` file:
+
+    [ssh_connection]
+    pipelining = True
+
+**Warning** this will cause deployments to break if `securetty` is used in your server's
+`/etc/sudoers` file.
+
+Notes
+-----
+
 See `geerlingguy/nodejs
 <https://github.com/geerlingguy/ansible-role-nodejs>`_ for the
 expected Ansible configuration variables for that role.

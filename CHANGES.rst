@@ -3,6 +3,13 @@ Tequila-django
 
 Changes
 
+unreleased
+-----------------------
+
+* Allow Git checkout of source tree on Vagrant environments instead
+  of only supporting source_is_local=true.
+
+
 v 0.9.2 on Aug 17, 2017
 -----------------------
 

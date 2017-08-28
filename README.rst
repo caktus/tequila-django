@@ -117,6 +117,14 @@ The ``extra_env`` variable is a dict of keys and values that is
 desired to be injected into the environment as variables, via the
 ``envfile.j2`` template.
 
+Note that if ``source_is_local`` is set to false, a Github checkout
+key needs to be provided in the environment secrets file, and that key
+needs to be added to the repo's settings within Github.
+Alternatively, if ``source_is_local`` is set to true, the user's local
+checkout of the repo is rsynced into the environment, with a few
+exclusions (.pyc files, the .git directory, the .env file, and the
+node_modules directory).
+
 Optimizations
 -------------
 
@@ -128,8 +136,8 @@ to your project's `ansible.cfg` file ::
     [ssh_connection]
     pipelining = True
 
-**Warning:** this will cause deployments to break if `securetty` is used in your server's
-`/etc/sudoers` file.
+**Warning:** this will cause deployments to break if ``securetty`` is used in your server's
+``/etc/sudoers`` file.
 
 Notes
 -----

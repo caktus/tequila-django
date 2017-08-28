@@ -39,22 +39,24 @@ allow the roles to be installed into ``/etc/ansible/roles``) ::
     roles_path = deployment/roles/
 
 Create a ``requirements.yml`` file in your project's deployment
-directory.  It is recommended to include tequila-common, which sets up
-the project directory structure and users, and also geerlingguy/nodejs
+directory.  It is recommended to include `tequila-common 
+<https://github.com/caktus/tequila-common>`_, which sets up
+the project directory structure and users, and also `geerlingguy/nodejs 
+<https://github.com/geerlingguy/ansible-role-nodejs>`_
 to install nodejs and any front-end packages that your project
 requires ::
 
     ---
     # file: deployment/requirements.yml
     - src: geerlingguy.nodejs
-      version: 4.1.1
+      version: 4.1.2
       name: nodejs
 
     - src: https://github.com/caktus/tequila-common
       version: v0.8.0
 
     - src: https://github.com/caktus/tequila-django
-      version: 0.8.2
+      version: v0.9.3
 
 Run ``ansible-galaxy`` with your requirements file ::
 
@@ -71,8 +73,7 @@ its playbooks.
 Variables
 ---------
 
-The following variables are made use of by the ``tequila-django``
-role:
+The following variables are used by the ``tequila-django`` role:
 
 - ``project_name`` **required**
 - ``env_name`` **required**
@@ -116,18 +117,27 @@ The ``extra_env`` variable is a dict of keys and values that is
 desired to be injected into the environment as variables, via the
 ``envfile.j2`` template.
 
+Note that if ``source_is_local`` is set to false, a Github checkout
+key needs to be provided in the environment secrets file, and that key
+needs to be added to the repo's settings within Github.
+Alternatively, if ``source_is_local`` is set to true, the user's local
+checkout of the repo is rsynced into the environment, with a few
+exclusions (.pyc files, the .git directory, the .env file, and the
+node_modules directory).
+
 Optimizations
 -------------
 
-You can turn on [SSH pipelining](http://docs.ansible.com/ansible/latest/intro_configuration.html#pipelining)
+You can turn on `SSH pipelining (http://docs.ansible.com/ansible/latest/intro_configuration.html#pipelining) 
+<http://docs.ansible.com/ansible/latest/intro_configuration.html#pipelining>`_
 to speed up ansible commands (by minimizing SSH operations). Add the following
-to your project's `ansible.cfg` file:
+to your project's `ansible.cfg` file ::
 
     [ssh_connection]
     pipelining = True
 
-**Warning** this will cause deployments to break if `securetty` is used in your server's
-`/etc/sudoers` file.
+**Warning:** this will cause deployments to break if ``securetty`` is used in your server's
+``/etc/sudoers`` file.
 
 Notes
 -----

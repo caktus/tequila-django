@@ -3,7 +3,7 @@ Tequila-django
 
 Changes
 
-Unreleased
+v 0.9.3 on Aug 28, 2017
 -----------------------
 
 * Allow Git checkout of source tree on Vagrant environments instead
@@ -45,11 +45,11 @@ v 0.9.0 on July 18, 2017
 
           ---
           - src: https://github.com/caktus/tequila-django
-            version: v0.9.0
+            version: v0.9.3
             name: tequila-django
 
           - src: geerlingguy.nodejs
-            version: 4.1.1
+            version: 4.1.2
             name: nodejs
           ...
 
@@ -66,13 +66,21 @@ v 0.9.0 on July 18, 2017
         deployment/playbooks/group_vars/all/project.yml)::
 
           ---
-          nodejs_version: "7.x"
+          nodejs_version: "6.x"
           nodejs_install_npm_user: "{{ project_name }}"
           nodejs_package_json_path: "{{ source_dir }}"
+          nodejs_config_unsafe_perm: true
 
         If you previously had anything configured under the variable
         ``global_npm_installs``, rename this variable to
-        ``nodejs_npm_global_packages``.
+        ``nodejs_npm_global_packages``.  Note that
+        ``nodejs_config_unsafe_perm`` has to be set to ``true`` in
+        order for the global npm installs to work for
+        ``nodejs_install_npm_user`` set to anything other than root.
+
+     #. If you previously had a different version of nodejs installed
+        using a .deb package, you should probably uninstall it, and
+        remove any PPA source file associated with it (if used).
 
      #. Modify your deployment/playbooks/web.yml file (or equivalent)
         to include the nodejs role _after_ the tequila-django role::

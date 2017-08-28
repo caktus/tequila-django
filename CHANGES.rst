@@ -3,6 +3,13 @@ Tequila-django
 
 Changes
 
+Unreleased
+-----------------------
+
+* Ignore .env and node_modules when rsync-ing source tree for
+  source_is_local processing.
+
+
 v 0.9.2 on Aug 17, 2017
 -----------------------
 

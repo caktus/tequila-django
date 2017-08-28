@@ -6,6 +6,9 @@ Changes
 Unreleased
 -----------------------
 
+* Allow Git checkout of source tree on Vagrant environments instead
+  of only supporting source_is_local=true.
+
 * Ignore .env and node_modules when rsync-ing source tree for
   source_is_local processing.
 

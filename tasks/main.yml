@@ -90,7 +90,7 @@
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true
-  when: env_name != 'local' and not source_is_local
+  when: not source_is_local
 
 # NB! The trailing '/' on the 'src' parameter is significant, do not remove!
 # (see the docs: http://docs.ansible.com/ansible/synchronize_module.html)
@@ -102,7 +102,9 @@
     rsync_path: "sudo rsync"  # Use sudo on the remote system
     recursive: true
     rsync_opts:
+      - "--exclude=.env"
       - "--exclude=.git"
+      - "--exclude=node_modules"
       - "--exclude=*.pyc"
   become: no  # stops synchronize trying to sudo locally
   when: source_is_local

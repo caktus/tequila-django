@@ -3,6 +3,12 @@ Tequila-django
 
 Changes
 
+v 0.9.4 on Sep 6, 2017
+----------------------
+
+* Mark the Django migration task to only run once.
+
+
 v 0.9.3 on Aug 28, 2017
 -----------------------
 

@@ -11,6 +11,7 @@ db_name: "{{ project_name }}_{{ env_name }}"
 db_user: "{{ project_name }}_{{ env_name }}"
 db_host: 'localhost'
 db_port: 5432
+cloud_staticfiles: true
 static_dir: "{{ root_dir }}/public/static"
 media_dir: "{{ root_dir }}/public/media"
 log_dir: "{{ root_dir }}/log"

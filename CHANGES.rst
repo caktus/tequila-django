@@ -3,6 +3,13 @@ Tequila-django
 
 Changes
 
+v 0.9.5 on Sep 13, 2017
+-----------------------
+
+* Added a ``cloud_staticfiles`` boolean variable, that determines
+  whether to run ``collectstatic`` only once or not.
+
+
 v 0.9.4 on Sep 6, 2017
 ----------------------
 

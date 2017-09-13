@@ -89,6 +89,7 @@ The following variables are used by the ``tequila-django`` role:
 - ``requirements_extra_args`` **default:** ``""``
 - ``use_newrelic`` **default:** ``false``
 - ``new_relic_license_key`` **required if use_newrelic is true**
+- ``cloud_staticfiles`` **default:** ``false``
 - ``gunicorn_version`` **optional**
 - ``gunicorn_num_workers`` **required**
 - ``gunicorn_num_threads`` **optional** (note: gunicorn sets this at ``1`` if ``--threads=...`` is not given)
@@ -124,6 +125,13 @@ Alternatively, if ``source_is_local`` is set to true, the user's local
 checkout of the repo is rsynced into the environment, with a few
 exclusions (.pyc files, the .git directory, the .env file, and the
 node_modules directory).
+
+The ``cloud_staticfiles`` variable is to allow for the case where the
+Django static files are being collected to an external service, such
+as S3.  In that case, we don't want to be running ``collectstatic`` on
+every web instance, since they'll be getting in each other's way.
+This variable set to ``true`` causes the ``collectstatic`` task to be
+run only once.
 
 Optimizations
 -------------

@@ -59,3 +59,4 @@
   command: /bin/true
   notify:
     - collectstatic
+  run_once: "{{ cloud_staticfiles }}"

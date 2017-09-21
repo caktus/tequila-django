@@ -78,6 +78,7 @@ The following variables are used by the ``tequila-django`` role:
 - ``project_name`` **required**
 - ``env_name`` **required**
 - ``domain`` **required**
+- ``additional_domains`` **default:** empty list
 - ``is_web`` **default:** ``false`` (**required:** one of ``is_web`` or ``is_worker`` set to ``true``)
 - ``is_worker`` **default:** ``false``
 - ``python_version`` **default:** ``"2.7"``

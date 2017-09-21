@@ -3,6 +3,13 @@ Tequila-django
 
 Changes
 
+v 0.9.6 on Sep 21, 2017
+-----------------------
+
+* Added an ``additional_domains`` variable, to allow for the
+  multi-domain case to be supported in the Django settings file.
+
+
 v 0.9.5 on Sep 13, 2017
 -----------------------
 

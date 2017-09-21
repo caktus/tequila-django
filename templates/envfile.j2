@@ -10,6 +10,7 @@ DB_HOST={{ db_host }}
 DB_PORT={{ db_port }}
 DB_PASSWORD={{ db_password }}
 DOMAIN={{ domain }}
+ADDITIONAL_DOMAINS="{{ additional_domains|default([])|join(',') }}"
 {% if cache_host is defined %}CACHE_HOST={{ cache_host }}
 {% endif %}
 {% if broker_host is defined %}BROKER_HOST={{ broker_host }}

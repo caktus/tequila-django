@@ -86,7 +86,7 @@
        version={{ repo.branch|default('master') }}
        force=yes
        ssh_opts="-o StrictHostKeyChecking=no"
-       key_file={{ github_key.dest|default(None) }}
+       key_file={{ github_key.dest|default(github_key.path)|default(None) }}
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true

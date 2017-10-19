@@ -3,6 +3,13 @@ Tequila-django
 
 Changes
 
+v 0.9.7 on Oct 19, 2017
+-----------------------
+
+* Work around for Ansible bug #25431. Store Github deploy key in a fact
+  so it's available regardless of result of previous task.
+
+
 v 0.9.6 on Sep 21, 2017
 -----------------------
 

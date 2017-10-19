@@ -71,9 +71,14 @@
   service: name=supervisor state=restarted
   when: supervisord_conf|changed
 
+- name: store path to github key
+  set_fact:
+    github_key_path: "{{ ssh_dir }}/github"
+  when: github_deploy_key|default('')
+
 - name: upload github key
   copy: content={{ github_deploy_key }}
-        dest={{ ssh_dir }}/github
+        dest={{ github_key_path }}
         owner={{ project_user }}
         group={{ project_user }}
         mode=600
@@ -86,7 +91,7 @@
        version={{ repo.branch|default('master') }}
        force=yes
        ssh_opts="-o StrictHostKeyChecking=no"
-       key_file={{ github_key.dest|default(None) }}
+       key_file={{ github_key_path|default(omit) }}
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true

@@ -3,6 +3,11 @@ Tequila-django
 
 Changes
 
+v 0.9.8 on Nov 27, 2017
+-----------------------
+* Properly quoting all environment variables.
+
+
 v 0.9.7 on Oct 19, 2017
 -----------------------
 

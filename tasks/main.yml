@@ -142,8 +142,8 @@
   failed_when: False
   when: package_json.stat.exists == True
 
-- fail:
-    msg: "All packages listed under devDependencies should be listed under dependancies"
+- debug:
+    msg: "There are packages listed under devDependencies. Please move any packages you wish to use in production to dependencies."
   when: dev_dependencies.stdout_lines[1] != '└── (empty)'
 
 - name: clear out leftover build cruft from the project requirements

@@ -3,6 +3,11 @@ Tequila-django
 
 Changes
 
+v 0.9.9 on Dec 11, 2017
+-----------------------
+* Issue a warning if npm packages are listed in devDependencies.
+
+
 v 0.9.8 on Nov 27, 2017
 -----------------------
 * Properly quoting all environment variables.

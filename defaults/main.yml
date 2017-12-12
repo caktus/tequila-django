@@ -19,4 +19,5 @@ use_newrelic: false
 source_is_local: false
 is_web: false
 is_worker: false
+ignore_devdependencies: false
 extra_env: {}

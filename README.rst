@@ -116,6 +116,7 @@ The following variables are used by the ``tequila-django`` role:
 - ``source_is_local`` **default:** ``false``
 - ``github_deploy_key`` **required if source_is_local is false**
 - ``local_project_dir`` **required if source_is_local**
+- ``ignore_devdependencies`` **default:** ``false``
 - ``extra_env`` **default:** empty dict
 
 The ``extra_env`` variable is a dict of keys and values that is
@@ -137,6 +138,15 @@ every web instance, since they'll be getting in each other's way.
 This variable set to ``true`` causes the ``collectstatic`` task to be
 run only once.
 
+Due to `some <https://github.com/npm/npm/issues/17471>`_ `issues
+<https://github.com/ansible/ansible/issues/29234>`_ discovered with
+npm not managing package installation when new packages are added to
+the ``devDependencies`` object in package.json, tequila-django checks
+for the presence of any packages in this variable and will throw an
+error if found.  This behavior can be disabled by setting
+``ignore_devdependencies`` to ``true``.
+
+
 Optimizations
 -------------
 
@@ -150,6 +160,7 @@ to your project's `ansible.cfg` file ::
 
 **Warning:** this will cause deployments to break if ``securetty`` is used in your server's
 ``/etc/sudoers`` file.
+
 
 Notes
 -----

@@ -3,13 +3,19 @@ Tequila-django
 
 Changes
 
-v 0.9.9 on Dec 11, 2017
+v 0.9.9 on Dec 12, 2017
 -----------------------
-* Issue a warning if npm packages are listed in devDependencies.
+
+* Throw a failure if the presence of packages in the project
+  package.json ``devDependencies`` object is detected.  Projects will
+  need to move their dependencies into the ``dependencies`` object
+  instead, or disable the check by setting ``ignore_devdependencies``
+  to ``true``.
 
 
 v 0.9.8 on Nov 27, 2017
 -----------------------
+
 * Properly quoting all environment variables.
 
 

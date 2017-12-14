@@ -1,5 +1,5 @@
 ---
-- name: configure celery and celery beat
+- name: configure celery
   template: src=celery.conf
             dest=/etc/supervisor/conf.d/{{ project_name }}-celery-{{ item.name }}.conf
             owner=root
@@ -7,6 +7,14 @@
             mode=0600
   with_items:
     - { name: "default", command: "worker", flags: "{{ celery_worker_extra_args|default('--loglevel=INFO') }}" }
+
+- name: configure celery beat
+  template: src=celery.conf
+            dest=/etc/supervisor/conf.d/{{ project_name }}-celery-{{ item.name }}.conf
+            owner=root
+            group=root
+            mode=0600
+  with_items:
     - { name: "beat", command: "beat", flags: "--schedule={{ root_dir }}/celerybeat-schedule.db --pidfile={{ root_dir }}/celerybeat.pid --loglevel=INFO" }
 
 - name: ensure celery is present

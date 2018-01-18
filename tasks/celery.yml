@@ -7,7 +7,7 @@
             mode=0600
   with_items:
     - { name: "default", command: "worker", flags: "{{ celery_worker_extra_args|default('--loglevel=INFO') }}" }
-    - { name: "beat", command: "beat", flags: "--schedule={{ root_dir }}/celerybeat-schedule.db --pidfile={{ root_dir }}/celerybeat.pid --loglevel=INFO" }
+    - { name: "beat", command: "beat", flags: "--schedule={{ root_dir }}/celerybeat-schedule.db --pidfile=/var/run/celerybeat.pid --loglevel=INFO" }
 
 - name: ensure celery is present
   supervisorctl: name={{ project_name }}-celery-{{ item }} state=present

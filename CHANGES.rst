@@ -18,6 +18,8 @@ v 0.9.8 on Nov 27, 2017
 
 * Properly quoting all environment variables.
 
+  Previously, most of the Ansible variables that were dropped into the .env file were not being quoted within that file, making many characters (spaces, characters with special meaning to the shell, etc.) unsafe for use within this file.  The workaround was to double-quote your Ansible variables, but now with this change any such variables need to be identified and the extra quoting removed.
+
 
 v 0.9.7 on Oct 19, 2017
 -----------------------

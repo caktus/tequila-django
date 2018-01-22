@@ -121,7 +121,10 @@ The following variables are used by the ``tequila-django`` role:
 
 The ``extra_env`` variable is a dict of keys and values that is
 desired to be injected into the environment as variables, via the
-``envfile.j2`` template.
+``envfile.j2`` template, which will be uploaded as a .env file for use
+with the django-dotenv library.  Variables will be injected into this
+file wrapped in single-quotes, so no additional escaping needs to be
+done to make them safe.
 
 Note that if ``source_is_local`` is set to false, a Github checkout
 key needs to be provided in the environment secrets file, and that key

@@ -7,7 +7,19 @@
             mode=0600
   with_items:
     - { name: "default", command: "worker", flags: "{{ celery_worker_extra_args|default('--loglevel=INFO') }}" }
-    - { name: "beat", command: "beat", flags: "--schedule={{ root_dir }}/celerybeat-schedule.db --pidfile=/var/run/celerybeat.pid --loglevel=INFO" }
+    - { name: "beat", command: "beat", flags: "--schedule={{ root_dir }}/celerybeat-schedule.db --pidfile=/var/run/celery/celerybeat.pid --loglevel=INFO" }
+
+- name: install celery tmpfile.d pid directory setting
+  template: src=celery_tmpfile.conf
+            dest=/etc/tmpfiles.d/celery.conf
+            owner=root
+            group=root
+            mode=0600
+  register: celery_tmpfile
+
+- name: create tmpfiles.d directories
+  command: systemd-tmpfiles --create
+  when: celery_tmpfile|changed
 
 - name: ensure celery is present
   supervisorctl: name={{ project_name }}-celery-{{ item }} state=present
@@ -20,3 +32,4 @@
   with_items:
     - default
     - beat
+

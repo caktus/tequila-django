@@ -12,7 +12,7 @@
 # Celery PIDs are stored in a directory in /var/run/celery (a tmpfs mount) so
 # that no stale celery PID files can exist across reboots. 
 #
-# A systemd-tmfiles setting is set up here so that /var/run/celery is created at
+# A systemd-tmpfiles setting is set up here so that /var/run/celery is created at
 # boot time with permissions allowing the project_name user to store their PIDs
 # there.
 - name: install celery tmpfile.d pid directory setting

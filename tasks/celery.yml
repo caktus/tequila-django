@@ -9,6 +9,12 @@
     - { name: "default", command: "worker", flags: "{{ celery_worker_extra_args|default('--loglevel=INFO') }}" }
     - { name: "beat", command: "beat", flags: "--schedule={{ root_dir }}/celerybeat-schedule.db --pidfile=/var/run/celery/celerybeat.pid --loglevel=INFO" }
 
+# Celery PIDs are stored in a directory in /var/run/celery (a tmpfs mount) so
+# that no stale celery PID files can exist across reboots. 
+#
+# A systemd-tmfiles setting is set up here so that /var/run/celery is created at
+# boot time with permissions allowing the project_name user to store their PIDs
+# there.
 - name: install celery tmpfile.d pid directory setting
   template: src=celery_tmpfile.conf
             dest=/etc/tmpfiles.d/celery.conf

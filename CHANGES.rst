@@ -3,8 +3,8 @@ Tequila-django
 
 Changes
 
-v UNRELEASED
-------------
+v 0.9.10 on Mar 2, 2018
+-----------------------
 
 * Move celerybeat's pid file to an in-memory filesystem.
 

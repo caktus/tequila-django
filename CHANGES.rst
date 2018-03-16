@@ -16,9 +16,12 @@ v 0.9.10+n on Month Day, Year
   Settings can be upgraded automatically using the Celery 4
   command line interface.
 
-  For more details, see the Celery 4 "What’s new in Celery
-  4.0" changelog document, in particular the "For Django
-  users and others who want to keep uppercase names" section.
+  For more details, see the Celery 4 `"What’s new in Celery
+  4.0" <http://docs.celeryproject.org/en/latest/whatsnew-4.0.html>`_
+  changelog document, in particular the "`For Django
+  users and others who want to keep uppercase names"
+  <http://docs.celeryproject.org/en/latest/whatsnew-4.0.html#lowercase-setting-names>`_
+  section.
 
 v 0.9.10 on Mar 2, 2018
 -----------------------

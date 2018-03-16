@@ -3,6 +3,23 @@ Tequila-django
 
 Changes
 
+v 0.9.10+n on Month Day, Year
+--------------------------
+
+* Add additional env vars to account for Celery 4's renamed
+  configuration settings.
+
+  NOTE: if you are upgrading from Celery 3 to Celery 4, be
+  aware of the changes made to Celery's setting names.
+  Old setting names will still work after the change, but
+  users are encouraged to upgrade as soon as possible.
+  Settings can be upgraded automatically using the Celery 4
+  command line interface.
+
+  For more details, see the Celery 4 "What’s new in Celery
+  4.0" changelog document, in particular the "For Django
+  users and others who want to keep uppercase names" section.
+
 v 0.9.10 on Mar 2, 2018
 -----------------------
 

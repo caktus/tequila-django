@@ -11,6 +11,11 @@ v 0.9.10+n on Month Day, Year
 
   NOTE: if you are upgrading from Celery 3 to Celery 4, be
   aware of the changes made to Celery's setting names.
+  Most relevant to tequila-django, the changed names
+  include the environment-variable-dependent
+  settings determined by the secrets ``broker_host``
+  and ``broker_password``.
+
   Old setting names will still work after the change, but
   users are encouraged to upgrade as soon as possible.
   Settings can be upgraded automatically using the Celery 4

@@ -3,6 +3,31 @@ Tequila-django
 
 Changes
 
+v 0.9.11 on March 19, 2018
+--------------------------
+
+* Add additional env vars to account for Celery 4's renamed
+  configuration settings.
+
+  NOTE: if you are upgrading from Celery 3 to Celery 4, be
+  aware of the changes made to Celery's setting names.
+  Most relevant to tequila-django, the changed names
+  include the environment-variable-dependent
+  settings determined by the secrets ``broker_host``
+  and ``broker_password``.
+
+  Old setting names will still work after the change, but
+  users are encouraged to upgrade as soon as possible.
+  Settings can be upgraded automatically using the Celery 4
+  command line interface.
+
+  For more details, see the Celery 4 `"What’s new in Celery
+  4.0" <http://docs.celeryproject.org/en/latest/whatsnew-4.0.html>`_
+  changelog document, in particular the "`For Django
+  users and others who want to keep uppercase names"
+  <http://docs.celeryproject.org/en/latest/whatsnew-4.0.html#lowercase-setting-names>`_
+  section.
+
 v 0.9.10 on Mar 2, 2018
 -----------------------
 

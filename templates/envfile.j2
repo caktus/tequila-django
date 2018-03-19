@@ -14,8 +14,10 @@ ADDITIONAL_DOMAINS="{{ additional_domains|default([])|join(',') }}"
 {% if cache_host is defined %}CACHE_HOST='{{ cache_host }}'
 {% endif %}
 {% if broker_host is defined %}BROKER_HOST='{{ broker_host }}'
+CELERY_BROKER_HOST='{{ broker_host }}'
 {% endif %}
 {% if broker_password is defined %}BROKER_PASSWORD='{{ broker_password }}'
+CELERY_BROKER_PASSWORD='{{ broker_password }}'
 {% endif %}
 {% if solr_host is defined %}SOLR_HOST='{{ solr_host }}'
 {% endif %}

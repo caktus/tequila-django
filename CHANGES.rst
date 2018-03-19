@@ -3,7 +3,7 @@ Tequila-django
 
 Changes
 
-v 0.9.10+n on Month Day, Year
+v 0.9.11 on March 19, 2018
 --------------------------
 
 * Add additional env vars to account for Celery 4's renamed

@@ -42,9 +42,9 @@ allow the roles to be installed into ``/etc/ansible/roles``) ::
     roles_path = deployment/roles/
 
 Create a ``requirements.yml`` file in your project's deployment
-directory.  It is recommended to include `tequila-common 
+directory.  It is recommended to include `tequila-common
 <https://github.com/caktus/tequila-common>`_, which sets up
-the project directory structure and users, and also `geerlingguy/nodejs 
+the project directory structure and users, and also `geerlingguy/nodejs
 <https://github.com/geerlingguy/ansible-role-nodejs>`_
 to install nodejs and any front-end packages that your project
 requires ::
@@ -59,7 +59,7 @@ requires ::
       version: v0.8.0
 
     - src: https://github.com/caktus/tequila-django
-      version: v0.9.3
+      version: v0.9.11
 
 Run ``ansible-galaxy`` with your requirements file ::
 
@@ -153,7 +153,7 @@ error if found.  This behavior can be disabled by setting
 Optimizations
 -------------
 
-You can turn on `SSH pipelining (http://docs.ansible.com/ansible/latest/intro_configuration.html#pipelining) 
+You can turn on `SSH pipelining (http://docs.ansible.com/ansible/latest/intro_configuration.html#pipelining)
 <http://docs.ansible.com/ansible/latest/intro_configuration.html#pipelining>`_
 to speed up ansible commands (by minimizing SSH operations). Add the following
 to your project's `ansible.cfg` file ::

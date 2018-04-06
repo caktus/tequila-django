@@ -21,3 +21,5 @@ is_web: false
 is_worker: false
 ignore_devdependencies: false
 extra_env: {}
+celery_events: false
+celery_camera_class: "django_celery_monitor.camera.Camera"

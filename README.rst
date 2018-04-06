@@ -109,6 +109,8 @@ The following variables are used by the ``tequila-django`` role:
 - ``broker_host`` **optional**
 - ``broker_password`` **optional**
 - ``celery_worker_extra_args`` **default:** ``"--loglevel=INFO"``
+- ``celery_events`` **default:** ``false``
+- ``celery_camera_class`` **default:** ``"django_celery_monitor.camera.Camera"``
 - ``static_dir`` **default:** ``"{{ root_dir }}/public/static"``
 - ``media_dir`` **default:** ``"{{ root_dir }}/public/media"``
 - ``log_dir`` **default:** ``"{{ root_dir }}/log"``

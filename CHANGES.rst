@@ -3,6 +3,19 @@ Tequila-django
 
 Changes
 
+v 0.9.n on Month Day, Year
+--------------------------
+
+* Add additional variables to enable Celery event monitoring
+  with snapshots.
+
+  Per the remarks added to the "Variables" section of the
+  README, tequila-django now includes variables that allow
+  the user to turn on Celery event monitoring alongside
+  other Celery commands. This relies on the ``celery events``
+  command introduced in Celery 3.1, and by default it uses
+  the ``django-celery-monitor`` app to capture worker events.
+
 v 0.9.11 on March 19, 2018
 --------------------------
 

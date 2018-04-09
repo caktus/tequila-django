@@ -151,6 +151,20 @@ for the presence of any packages in this variable and will throw an
 error if found.  This behavior can be disabled by setting
 ``ignore_devdependencies`` to ``true``.
 
+The ``celery_events`` and ``celery_camera_class`` variables are used
+to enable and configure Celery event monitoring using the "snapshots"
+system, which allows worker activity to be tracked in a less expensive
+way than storing all event history on disk. Setting ``celery_events``
+to ``true`` will set up the ``celery events`` command to be run alongside
+the other Celery commands. By default this will use the
+`django-celery-monitor <https://github.com/jezdez/django-celery-monitor>`_
+app as its snapshot "camera", so either ensure that this app is installed
+in your project or change ``celery_camera_class`` to a string naming
+the alternative camera class to use (e.g. ``myapp.Camera``). For
+more on Celery event monitoring, see
+`the docs <http://docs.celeryproject.org/en/latest/userguide/monitoring.html>`_.
+
+
 
 Optimizations
 -------------

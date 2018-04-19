@@ -3,8 +3,18 @@ Tequila-django
 
 Changes
 
-v 0.9.11 on March 19, 2018
---------------------------
+v 0.9.12 on Apr 19, 2018
+------------------------
+
+* Remove the check-and-fail for entries in the packages.json
+  ``devDependencies`` block.  This was just protecting against a
+  corner of npm, no other portion of the deployment depends on it, and
+  it will cause deployments to new environments to fail since npm
+  hasn't been installed yet.
+
+
+v 0.9.11 on Mar 19, 2018
+------------------------
 
 * Add additional env vars to account for Celery 4's renamed
   configuration settings.

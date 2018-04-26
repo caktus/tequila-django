@@ -3,6 +3,20 @@ Tequila-django
 
 Changes
 
+v 0.9.12 on April 27, 2018
+--------------------------
+
+* Split out the npm tasks into a new role, `tequila-nodejs
+  <https://github.com/caktus/tequila-nodejs>`_.  Projects upgrading to
+  this version will need to add tequila-nodejs to their
+  requirements.yml file while still retaining geerlingguy.nodejs,
+  which is a dependency of this new role.  Additionally, the
+  playbook/web.yml playbook should be updated to execute
+  tequila-nodejs instead of geerlingguy.nodejs, and it should be
+  placed immediately after the tequila-django role.  See the new
+  example web.yml file in the playbooks directory in this repo.
+
+
 v 0.9.11 on March 19, 2018
 --------------------------
 

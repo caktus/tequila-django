@@ -14,7 +14,8 @@ v 0.9.12 on April 27, 2018
   playbook/web.yml playbook should be updated to execute
   tequila-nodejs instead of geerlingguy.nodejs, and it should be
   placed immediately after the tequila-django role.  See the new
-  example web.yml file in the playbooks directory in this repo.
+  example web.yml file in the playbooks directory in the
+  `caktus/tequila <https://github.com/caktus/tequila>`_ repo.
 
 
 v 0.9.11 on March 19, 2018

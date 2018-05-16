@@ -82,8 +82,10 @@ The following variables are used by the ``tequila-django`` role:
 - ``env_name`` **required**
 - ``domain`` **required**
 - ``additional_domains`` **default:** empty list
-- ``is_web`` **default:** ``false`` (**required:** one of ``is_web`` or ``is_worker`` set to ``true``)
+- ``is_web`` **default:** ``false`` (**required:** one of ``is_web``
+  or ``is_worker`` or ``is_celery_beat`` set to ``true``)
 - ``is_worker`` **default:** ``false``
+- ``is_celery_beat`` **default:** ``false``
 - ``python_version`` **default:** ``"2.7"``
 - ``root_dir`` **default:** ``"/var/www/{{ project_name }}"``
 - ``source_dir`` **default:** ``"{{ root_dir }}/src"``
@@ -150,6 +152,17 @@ the ``devDependencies`` object in package.json, tequila-django checks
 for the presence of any packages in this variable and will throw an
 error if found.  This behavior can be disabled by setting
 ``ignore_devdependencies`` to ``true``.
+
+The ``is_celery_beat`` variable is used to specify which server
+instance will run celery beat, a worker dedicated to running tasks
+that are specified to execute at specific times.  Generally, you only
+want one instance running celery beat at a time, to prevent scheduled
+tasks from attempting to be executed more than once.  It is
+recommended to set aside an inventory group, e.g. ``[beat]``, to
+distinguish this instance from your ordinary celery workers in their
+own group, e.g. ``[workers]``.  Your playbook(s) may then set
+``is_celery_beat``, ``is_worker``, and ``is_web`` based on the
+instances' inventory group membership.
 
 The ``celery_events`` and ``celery_camera_class`` variables are used
 to enable and configure Celery event monitoring using the "snapshots"

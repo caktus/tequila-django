@@ -3,6 +3,46 @@ Tequila-django
 
 Changes
 
+v 0.9.n+1 on Month Day, Year
+----------------------------
+
+* Allow a celery beat instance to be deployed and configured
+  independently of the celery worker instances.  This is because it is
+  desirable to have only one beat instance, generally.
+
+  It is recommended to add a new group to your inventory files,
+  e.g. ``[beat]``, that has exactly one instance in it, which may be
+  an instance that is also in your ``[worker]`` group.  You may then
+  create a new playbook, e.g. ``deployment/playbooks/beat.yml``,
+  containing something like::
+
+    ---
+    - hosts: beat
+      become: yes
+      roles:
+        - { role: tequila-django, is_celery_beat: true }
+
+  If you go this route, do not forget to add this new beat.yml file to
+  the list invoked by your site.yml playbook.  Note that if you
+  incorporate this change this way, the tequila-django role will be
+  executed multiple times on instances that incorporate these
+  differing variants.  Alternatively, one can fold together the
+  invocation of tequila-django into a single playbook that uses group
+  checking to set the parameters used, like so::
+
+    ---
+    - hosts: web:worker:beat
+      become: yes
+      roles:
+        - role: tequila-django
+          is_web: "{{ 'web' in group_names }}"
+          is_worker: "{{ 'worker' in group_names }}"
+          is_celery_beat: "{{ 'beat' in group_names }}"
+
+  This has the advantage of requiring only one loop through the
+  tequila-django tasks per server instance.
+
+
 v 0.9.n on Month Day, Year
 --------------------------
 
@@ -15,6 +55,7 @@ v 0.9.n on Month Day, Year
   other Celery commands. This relies on the ``celery events``
   command introduced in Celery 3.1, and by default it uses
   the ``django-celery-monitor`` app to capture worker events.
+
 
 v 0.9.11 on March 19, 2018
 --------------------------
@@ -40,6 +81,7 @@ v 0.9.11 on March 19, 2018
   users and others who want to keep uppercase names"
   <http://docs.celeryproject.org/en/latest/whatsnew-4.0.html#lowercase-setting-names>`_
   section.
+
 
 v 0.9.10 on Mar 2, 2018
 -----------------------

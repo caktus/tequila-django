@@ -3,7 +3,7 @@ Tequila-django
 
 Changes
 
-v 0.9.12 on April 27, 2018
+v 0.9.12 on May 31, 2018
 --------------------------
 
 * Split out the npm tasks into a new role, `tequila-nodejs

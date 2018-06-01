@@ -3,7 +3,7 @@ Tequila-django
 
 Changes
 
-v 0.9.n on Month Day, Year
+v 0.9.13 on June 1, 2018
 --------------------------
 
 * Add additional variables to enable Celery event monitoring

@@ -43,23 +43,26 @@ allow the roles to be installed into ``/etc/ansible/roles``) ::
 
 Create a ``requirements.yml`` file in your project's deployment
 directory.  It is recommended to include `tequila-common
-<https://github.com/caktus/tequila-common>`_, which sets up
-the project directory structure and users, and also `geerlingguy/nodejs
-<https://github.com/geerlingguy/ansible-role-nodejs>`_
-to install nodejs and any front-end packages that your project
-requires ::
+<https://github.com/caktus/tequila-common>`_, which sets up the
+project directory structure and users, and also `tequila-nodejs
+<https://github.com/caktus/tequila-nodejs>`_ and `geerlingguy/nodejs
+<https://github.com/geerlingguy/ansible-role-nodejs>`_ to install
+nodejs and any front-end packages that your project requires ::
 
     ---
     # file: deployment/requirements.yml
-    - src: geerlingguy.nodejs
-      version: 4.1.2
-      name: nodejs
-
     - src: https://github.com/caktus/tequila-common
       version: v0.8.0
 
     - src: https://github.com/caktus/tequila-django
       version: v0.9.11
+
+    - src: geerlingguy.nodejs
+      version: 4.1.2
+      name: nodejs
+
+    - src: https://github.com/caktus/tequila-nodejs
+      version: v0.8.0
 
 Run ``ansible-galaxy`` with your requirements file ::
 
@@ -118,7 +121,6 @@ The following variables are used by the ``tequila-django`` role:
 - ``source_is_local`` **default:** ``false``
 - ``github_deploy_key`` **required if source_is_local is false**
 - ``local_project_dir`` **required if source_is_local**
-- ``ignore_devdependencies`` **default:** ``false``
 - ``extra_env`` **default:** empty dict
 
 The ``extra_env`` variable is a dict of keys and values that is
@@ -143,14 +145,6 @@ every web instance, since they'll be getting in each other's way.
 This variable set to ``true`` causes the ``collectstatic`` task to be
 run only once.
 
-Due to `some <https://github.com/npm/npm/issues/17471>`_ `issues
-<https://github.com/ansible/ansible/issues/29234>`_ discovered with
-npm not managing package installation when new packages are added to
-the ``devDependencies`` object in package.json, tequila-django checks
-for the presence of any packages in this variable and will throw an
-error if found.  This behavior can be disabled by setting
-``ignore_devdependencies`` to ``true``.
-
 The ``celery_events`` and ``celery_camera_class`` variables are used
 to enable and configure Celery event monitoring using the "snapshots"
 system, which allows worker activity to be tracked in a less expensive
@@ -163,8 +157,6 @@ in your project or change ``celery_camera_class`` to a string naming
 the alternative camera class to use (e.g. ``myapp.Camera``). For
 more on Celery event monitoring, see
 `the docs <http://docs.celeryproject.org/en/latest/userguide/monitoring.html>`_.
-
-
 
 Optimizations
 -------------
@@ -179,11 +171,3 @@ to your project's `ansible.cfg` file ::
 
 **Warning:** this will cause deployments to break if ``securetty`` is used in your server's
 ``/etc/sudoers`` file.
-
-
-Notes
------
-
-See `geerlingguy/nodejs
-<https://github.com/geerlingguy/ansible-role-nodejs>`_ for the
-expected Ansible configuration variables for that role.

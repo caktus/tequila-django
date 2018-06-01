@@ -16,6 +16,20 @@ v 0.9.n on Month Day, Year
   command introduced in Celery 3.1, and by default it uses
   the ``django-celery-monitor`` app to capture worker events.
 
+v 0.9.12 on May 31, 2018
+--------------------------
+
+* Split out the npm tasks into a new role, `tequila-nodejs
+  <https://github.com/caktus/tequila-nodejs>`_.  Projects upgrading to
+  this version will need to add tequila-nodejs to their
+  requirements.yml file while still retaining geerlingguy.nodejs,
+  which is a dependency of this new role.  Additionally, the
+  playbook/web.yml playbook should be updated to execute
+  tequila-nodejs instead of geerlingguy.nodejs, and it should be
+  placed immediately after the tequila-django role.  See the new
+  example web.yml file in the playbooks directory in the
+  `caktus/tequila <https://github.com/caktus/tequila>`_ repo.
+
 v 0.9.11 on March 19, 2018
 --------------------------
 

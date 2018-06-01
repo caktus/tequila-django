@@ -42,18 +42,11 @@
             group={{ project_name }}
             mode=700
 
-# Note: we want the npm build and collectstatic steps to happen at the
-# very end of the roles section for the current playbook, so that
-# they'll still happen in the order needed even if the playbook has a
-# 3rd-party role after tequila-django, e.g. geerlingguy/nodejs.  Thus,
-# they are moved out into handlers.
-
-- name: trigger build of npm artifacts
-  command: /bin/true
-  notify:
-    - chown node_modules
-    - npm run build
-  when: package_json.stat.exists == True and build_script.stdout != ""
+# Note: we want the collectstatic step to happen at the very end of
+# the roles section for the current playbook, so that it'll still
+# happen in the order needed even if the playbook has another role
+# after tequila-django, e.g. geerlingguy/nodejs and tequila-nodejs.
+# Thus, it is moved out into handlers.
 
 - name: trigger collectstatic
   command: /bin/true

@@ -127,25 +127,6 @@
   vars:
     ansible_ssh_pipelining: true
 
-- name: check for a package.json file
-  stat: path={{ source_dir }}/package.json
-  register: package_json
-
-- name: check for build script in package.json
-  command: awk '/\<scripts\>/,/\<build\>/' {{ source_dir }}/package.json
-  register: build_script
-  when: package_json.stat.exists == True
-
-- name: check developer dependencies
-  command: npm ls -dev --parseable --prefix {{ source_dir }}
-  register: dev_dependencies
-  when: package_json.stat.exists == True
-
-- name: fail when there are project-level devDependencies
-  fail:
-    msg: "There are packages listed under `devDependencies`. Please move them to `dependencies` instead."
-  when: not ignore_devdependencies and package_json.stat.exists == True and dev_dependencies.stdout_lines|length > 1
-
 - name: clear out leftover build cruft from the project requirements
   file: path={{ venv_dir }}/build state=absent
 

@@ -17,9 +17,10 @@
             mode=0600
   when: celery_events
   vars:
-    name: "events"
-    command: "events"
-    flags: "--camera {{ celery_camera_class }} --pidfile /var/run/celery/celery-events.pid --loglevel=INFO"
+    item:
+      name: "events"
+      command: "events"
+      flags: "--camera {{ celery_camera_class }} --pidfile /var/run/celery/celery-events.pid --loglevel=INFO"
 
 # Celery PIDs are stored in a directory in /var/run/celery (a tmpfs mount) so
 # that no stale celery PID files can exist across reboots.

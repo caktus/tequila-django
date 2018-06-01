@@ -20,3 +20,5 @@ source_is_local: false
 is_web: false
 is_worker: false
 extra_env: {}
+celery_events: false
+celery_camera_class: "django_celery_monitor.camera.Camera"

@@ -112,6 +112,8 @@ The following variables are used by the ``tequila-django`` role:
 - ``broker_host`` **optional**
 - ``broker_password`` **optional**
 - ``celery_worker_extra_args`` **default:** ``"--loglevel=INFO"``
+- ``celery_events`` **default:** ``false``
+- ``celery_camera_class`` **default:** ``"django_celery_monitor.camera.Camera"``
 - ``static_dir`` **default:** ``"{{ root_dir }}/public/static"``
 - ``media_dir`` **default:** ``"{{ root_dir }}/public/media"``
 - ``log_dir`` **default:** ``"{{ root_dir }}/log"``
@@ -143,6 +145,18 @@ every web instance, since they'll be getting in each other's way.
 This variable set to ``true`` causes the ``collectstatic`` task to be
 run only once.
 
+The ``celery_events`` and ``celery_camera_class`` variables are used
+to enable and configure Celery event monitoring using the "snapshots"
+system, which allows worker activity to be tracked in a less expensive
+way than storing all event history on disk. Setting ``celery_events``
+to ``true`` will set up the ``celery events`` command to be run alongside
+the other Celery commands. By default this will use the
+`django-celery-monitor <https://github.com/jezdez/django-celery-monitor>`_
+app as its snapshot "camera", so either ensure that this app is installed
+in your project or change ``celery_camera_class`` to a string naming
+the alternative camera class to use (e.g. ``myapp.Camera``). For
+more on Celery event monitoring, see
+`the docs <http://docs.celeryproject.org/en/latest/userguide/monitoring.html>`_.
 
 Optimizations
 -------------

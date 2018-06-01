@@ -1,16 +1,40 @@
 ---
-- name: configure celery and celery beat
+- name: configure celery
   template: src=celery.conf
-            dest=/etc/supervisor/conf.d/{{ project_name }}-celery-{{ item.name }}.conf
+            dest=/etc/supervisor/conf.d/{{ project_name }}-celery-{{ name }}.conf
             owner=root
             group=root
             mode=0600
-  with_items:
-    - { name: "default", command: "worker", flags: "{{ celery_worker_extra_args|default('--loglevel=INFO') }}" }
-    - { name: "beat", command: "beat", flags: "--schedule={{ root_dir }}/celerybeat-schedule.db --pidfile=/var/run/celery/celerybeat.pid --loglevel=INFO" }
+  vars:
+    name: "default"
+    command: "worker"
+    flags: "{{ celery_worker_extra_args|default('--loglevel=INFO') }}{% if celery_events %} --events{% endif %}"
+
+- name: configure celery beat
+  template: src=celery.conf
+            dest=/etc/supervisor/conf.d/{{ project_name }}-celery-{{ name }}.conf
+            owner=root
+            group=root
+            mode=0600
+  vars:
+    name: "beat"
+    command: "beat"
+    flags: "--schedule={{ root_dir }}/celerybeat-schedule.db --pidfile=/var/run/celery/celerybeat.pid --loglevel=INFO"
+
+- name: configure celery events
+  template: src=celery.conf
+            dest=/etc/supervisor/conf.d/{{ project_name }}-celery-events.conf
+            owner=root
+            group=root
+            mode=0600
+  when: celery_events
+  vars:
+    name: "events"
+    command: "events"
+    flags: "--camera {{ celery_camera_class }} --pidfile /var/run/celery/celery-events.pid --loglevel=INFO"
 
 # Celery PIDs are stored in a directory in /var/run/celery (a tmpfs mount) so
-# that no stale celery PID files can exist across reboots. 
+# that no stale celery PID files can exist across reboots.
 #
 # A systemd-tmpfiles setting is set up here so that /var/run/celery is created at
 # boot time with permissions allowing the project_name user to store their PIDs
@@ -38,4 +62,3 @@
   with_items:
     - default
     - beat
-

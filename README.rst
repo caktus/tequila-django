@@ -36,10 +36,15 @@ Installation
 Create an ``ansible.cfg`` file in your project directory to tell
 Ansible where to install your roles (optionally, set the
 ``ANSIBLE_ROLES_PATH`` environment variable to do the same thing, or
-allow the roles to be installed into ``/etc/ansible/roles``) ::
+allow the roles to be installed into ``/etc/ansible/roles``).
+You should also enable ssh pipelining for performance, and might
+optionally want to enable ssh agent forwarding.::
 
     [defaults]
     roles_path = deployment/roles/
+    [ssh_connection]
+    pipelining = True
+    ssh_args = -o ForwardAgent=yes -o ControlMaster=auto -o ControlPersist=60s -o ControlPath=/tmp/ansible-ssh-%h-%p-%r
 
 Create a ``requirements.yml`` file in your project's deployment
 directory.  It is recommended to include `tequila-common

@@ -130,6 +130,15 @@
 - name: clear out leftover build cruft from the project requirements
   file: path={{ venv_dir }}/build state=absent
 
+- name: "(ssh-agent hack: grant access to {{ project_user }})"
+  # SSH-agent socket is forwarded for the current user only (0700 file). Let's change it
+  # See: https://github.com/ansible/ansible/issues/7235
+  # See: http://serverfault.com/questions/107187/ssh-agent-forwarding-and-sudo-to-another-user
+  acl: name={{ item }} etype=user entity={{ project_user }} permissions="rwx" state=present
+  with_items:
+    - "{{ ansible_env.SSH_AUTH_SOCK|dirname }}"
+    - "{{ ansible_env.SSH_AUTH_SOCK }}"
+
 - name: pip install the project requirements
   pip: requirements={{ requirements_file }}
        virtualenv={{ venv_dir }}

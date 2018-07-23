@@ -39,17 +39,19 @@
 # A systemd-tmpfiles setting is set up here so that /var/run/celery is created at
 # boot time with permissions allowing the project_name user to store their PIDs
 # there.
-- name: install celery tmpfile.d pid directory setting
-  template: src=celery_tmpfile.conf
-            dest=/etc/tmpfiles.d/celery.conf
-            owner=root
-            group=root
-            mode=0600
-  register: celery_tmpfile
+- when: not subproject
+  block:
+  - name: install celery tmpfile.d pid directory setting
+    template: src=celery_tmpfile.conf
+              dest=/etc/tmpfiles.d/celery.conf
+              owner=root
+              group=root
+              mode=0600
+    register: celery_tmpfile
 
-- name: create tmpfiles.d directories
-  command: systemd-tmpfiles --create
-  when: celery_tmpfile|changed
+  - name: create tmpfiles.d directories
+    command: systemd-tmpfiles --create
+    when: celery_tmpfile|changed
 
 - name: ensure celery is present
   supervisorctl: name={{ project_name }}-celery-{{ item }} state=present

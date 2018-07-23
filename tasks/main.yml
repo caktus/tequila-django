@@ -145,6 +145,7 @@
        virtualenv={{ venv_dir }}
        virtualenv_python=/usr/bin/python{{ python_version }}
        extra_args={{ requirements_extra_args|default("") }}
+       chdir={{ source_dir }}
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true

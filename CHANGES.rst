@@ -3,6 +3,14 @@ Tequila-django
 
 Changes
 
+v X.Y.Z on MMM dd, YYYY
+-----------------------
+
+* New variable ``project_port`` to have Django listen on a port
+  other than 8000, to help with multi-site deploys.
+* Add ``subproject`` variable to speed up multisite deploys.
+* Update README with example for SSH agent forwarding.
+
 v 0.9.13 on June 1, 2018
 --------------------------
 

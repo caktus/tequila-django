@@ -1,5 +1,5 @@
 ---
-- name: configure celery
+- name: configure celery for project {{ project_name }}
   template: src=celery.conf
             dest=/etc/supervisor/conf.d/{{ project_name }}-celery-{{ name }}.conf
             owner=root
@@ -10,7 +10,7 @@
     command: "worker"
     flags: "{{ celery_worker_extra_args|default('--loglevel=INFO') }}{% if celery_events %} --events{% endif %}"
 
-- name: configure celery beat
+- name: configure celery beat for project {{ project_name }}
   template: src=celery.conf
             dest=/etc/supervisor/conf.d/{{ project_name }}-celery-{{ name }}.conf
             owner=root
@@ -21,7 +21,7 @@
     command: "beat"
     flags: "--schedule={{ root_dir }}/celerybeat-schedule.db --pidfile=/var/run/celery/celerybeat.pid --loglevel=INFO"
 
-- name: configure celery events
+- name: configure celery events for project {{ project_name }}
   template: src=celery.conf
             dest=/etc/supervisor/conf.d/{{ project_name }}-celery-events.conf
             owner=root
@@ -41,7 +41,7 @@
 # there.
 - when: not subproject
   block:
-  - name: install celery tmpfile.d pid directory setting
+  - name: install celery tmpfile.d pid directory setting on server
     template: src=celery_tmpfile.conf
               dest=/etc/tmpfiles.d/celery.conf
               owner=root
@@ -53,13 +53,13 @@
     command: systemd-tmpfiles --create
     when: celery_tmpfile|changed
 
-- name: ensure celery is present
+- name: ensure celery is present for project {{ project_name }}
   supervisorctl: name={{ project_name }}-celery-{{ item }} state=present
   with_items:
     - default
     - beat
 
-- name: restart celery
+- name: restart celery for project {{ project_name }}
   supervisorctl: name={{ project_name }}-celery-{{ item }} state=restarted
   with_items:
     - default

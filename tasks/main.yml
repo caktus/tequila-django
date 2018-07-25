@@ -71,6 +71,10 @@
   service: name=supervisor state=restarted
   when: supervisord_conf|changed
 
+- name: where is ssh_dir, project_name, project_user
+  debug:
+    msg: "{{ ssh_dir }}, {{ project_name }}, {{ project_user }}"
+
 - name: store path to github key
   set_fact:
     github_key_path: "{{ ssh_dir }}/github"
@@ -85,12 +89,12 @@
   register: github_key
   when: github_deploy_key|default('')
 
-- name: checkout latest project source
+- name: checkout latest project source from {{ repo.url }} branch {{ repo.branch|default('master') }}
   git: repo={{ repo.url }}
        dest={{ source_dir }}
        version={{ repo.branch|default('master') }}
        force=yes
-       ssh_opts="-o StrictHostKeyChecking=no"
+       accept_hostkey=yes
        key_file={{ github_key_path|default(omit) }}
   become_user: "{{ project_user }}"
   vars:
@@ -126,6 +130,32 @@
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true
+
+# Kept running into AttributeError: '_NamespacePath' object has no attribute 'sort'
+# https://github.com/pypa/setuptools/issues/885#issuecomment-387711115
+# Fix is to force most recent setuptools
+# This has to run *before* tequila-django tries to pip install our requirements.
+- name: uninstall setuptools from venv
+  become_user: "{{ project_user }}"
+  pip:
+    name: setuptools
+    state: absent
+    virtualenv: "{{ venv_dir }}"
+    virtualenv_python: "/usr/bin/python{{ python_version }}"
+
+- name: uninstall python-setuptools system package
+  become: true
+  apt:
+    name: python-setuptools
+    state: absent
+
+- name: install latest setuptools into venv
+  become_user: "{{ project_user }}"
+  pip:
+    name: setuptools
+    state: latest
+    virtualenv: "{{ venv_dir }}"
+    virtualenv_python: "/usr/bin/python{{ python_version }}"
 
 - name: clear out leftover build cruft from the project requirements
   file: path={{ venv_dir }}/build state=absent

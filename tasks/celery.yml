@@ -51,7 +51,7 @@
 
   - name: create tmpfiles.d directories
     command: systemd-tmpfiles --create
-    when: celery_tmpfile|changed
+    when: celery_tmpfile is changed
 
 - name: ensure celery is present for project {{ project_name }}
   supervisorctl: name={{ project_name }}-celery-{{ item }} state=present
@@ -60,7 +60,8 @@
     - beat
 
 - name: restart celery for project {{ project_name }}
-  supervisorctl: name={{ project_name }}-celery-{{ item }} state=restarted
-  with_items:
-    - default
-    - beat
+  shell: supervisorctl reread; supervisorctl update
+  #supervisorctl: name={{ project_name }}-celery-{{ item }} state=restarted
+#  with_items:
+#    - default
+#    - beat

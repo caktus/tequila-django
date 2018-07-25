@@ -38,8 +38,8 @@
 - name: copy shell script wrapper for manage.py
   template: src=manage.sh
             dest={{ root_dir }}/manage.sh
-            owner={{ project_name }}
-            group={{ project_name }}
+            owner={{ project_user }}
+            group={{ project_user }}
             mode=700
 
 # Note: we want the collectstatic step to happen at the very end of

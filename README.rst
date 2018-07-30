@@ -37,7 +37,8 @@ Create an ``ansible.cfg`` file in your project directory to tell
 Ansible where to install your roles (optionally, set the
 ``ANSIBLE_ROLES_PATH`` environment variable to do the same thing, or
 allow the roles to be installed into ``/etc/ansible/roles``).
-You should also enable ssh pipelining for performance, and might
+You should also enable ssh pipelining for performance (but see
+the warning below under _Optimizations_ first), and might
 optionally want to enable ssh agent forwarding.::
 
     [defaults]
@@ -96,7 +97,7 @@ The following variables are used by the ``tequila-django`` role:
 - ``root_dir`` **default:** ``"/var/www/{{ project_name }}"``
 - ``source_dir`` **default:** ``"{{ root_dir }}/src"``
 - ``venv_dir`` **default:** ``"{{ root_dir }}/env"``
-- ``ssh_dir`` **default:** ``"/home/{{ project_name }}/.ssh"``
+- ``ssh_dir`` **default:** ``"/home/{{ project_user }}/.ssh"``
 - ``requirements_file`` **default:** ``"{{ source_dir }}/requirements/{{ env_name }}.txt"``
 - ``requirements_extra_args`` **default:** ``""``
 - ``use_newrelic`` **default:** ``false``

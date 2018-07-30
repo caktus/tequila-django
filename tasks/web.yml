@@ -20,7 +20,7 @@
 - name: ensure gunicorn is present
   supervisorctl: name={{ project_name }}-server state=present
 
-# TODO: let connections to 8000 through the firewall if we are load-balancing.
+# TODO: let connections to the {{ project_port }} through the firewall if we are load-balancing.
 
 - name: migrate
   django_manage:

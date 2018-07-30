@@ -23,4 +23,3 @@ extra_env: {}
 celery_events: false
 celery_camera_class: "django_celery_monitor.camera.Camera"
 project_port: 8000
-subproject: false

@@ -128,10 +128,6 @@ The following variables are used by the ``tequila-django`` role:
 - ``local_project_dir`` **required if source_is_local**
 - ``extra_env`` **default:** empty dict
 - ``project_port`` **default:** 8000 - what port Django listens on
-- ``subproject`` **default:** ``false`` - for multiple project deploys,
-   this can be set true for all but one project, so things that only
-   need to be done once on the server can be skipped for all but one
-   project.
 
 The ``extra_env`` variable is a dict of keys and values that is
 desired to be injected into the environment as variables, via the

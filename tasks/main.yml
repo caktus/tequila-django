@@ -71,10 +71,6 @@
   service: name=supervisor state=restarted
   when: supervisord_conf|changed
 
-- name: where is ssh_dir, project_name, project_user
-  debug:
-    msg: "{{ ssh_dir }}, {{ project_name }}, {{ project_user }}"
-
 - name: store path to github key
   set_fact:
     github_key_path: "{{ ssh_dir }}/github"

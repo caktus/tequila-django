@@ -1,5 +1,5 @@
 ---
-- name: configure celery for project {{ project_name }}
+- name: configure celery
   template: src=celery.conf
             dest=/etc/supervisor/conf.d/{{ project_name }}-celery-{{ name }}.conf
             owner=root
@@ -10,7 +10,7 @@
     command: "worker"
     flags: "{{ celery_worker_extra_args|default('--loglevel=INFO') }}{% if celery_events %} --events{% endif %}"
 
-- name: configure celery beat for project {{ project_name }}
+- name: configure celery beat
   template: src=celery.conf
             dest=/etc/supervisor/conf.d/{{ project_name }}-celery-{{ name }}.conf
             owner=root
@@ -21,7 +21,7 @@
     command: "beat"
     flags: "--schedule={{ root_dir }}/celerybeat-schedule.db --pidfile=/var/run/celery/celerybeat.pid --loglevel=INFO"
 
-- name: configure celery events for project {{ project_name }}
+- name: configure celery events
   template: src=celery.conf
             dest=/etc/supervisor/conf.d/{{ project_name }}-celery-events.conf
             owner=root
@@ -39,29 +39,26 @@
 # A systemd-tmpfiles setting is set up here so that /var/run/celery is created at
 # boot time with permissions allowing the project_name user to store their PIDs
 # there.
-- when: not subproject
-  block:
-  - name: install celery tmpfile.d pid directory setting on server
-    template: src=celery_tmpfile.conf
-              dest=/etc/tmpfiles.d/celery.conf
-              owner=root
-              group=root
-              mode=0600
-    register: celery_tmpfile
+- name: install celery tmpfile.d pid directory setting
+  template: src=celery_tmpfile.conf
+            dest=/etc/tmpfiles.d/celery.conf
+            owner=root
+            group=root
+            mode=0600
+  register: celery_tmpfile
 
   - name: create tmpfiles.d directories
     command: systemd-tmpfiles --create
     when: celery_tmpfile is changed
 
-- name: ensure celery is present for project {{ project_name }}
+- name: ensure celery is present
   supervisorctl: name={{ project_name }}-celery-{{ item }} state=present
   with_items:
     - default
     - beat
 
-- name: restart celery for project {{ project_name }}
-  shell: supervisorctl reread; supervisorctl update
-  #supervisorctl: name={{ project_name }}-celery-{{ item }} state=restarted
-#  with_items:
-#    - default
-#    - beat
+- name: restart celery
+  supervisorctl: name={{ project_name }}-celery-{{ item }} state=restarted
+  with_items:
+    - default
+    - beat

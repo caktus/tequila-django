@@ -3,8 +3,8 @@ Tequila-django
 
 Changes
 
-v X.Y.Z on MMM dd, YYYY
------------------------
+v 0.9.14 on Jul 30, 2018
+------------------------
 
 * New variable ``project_port`` to have Django listen on a port
   other than 8000, to help with multi-site deploys.

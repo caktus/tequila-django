@@ -150,7 +150,7 @@
   when: use_newrelic
 
 - name: set up the project python path
-  copy: content="{{ source_dir }}"
+  copy: content="{{ source_dir }}/{{ project_subdir }}"
         dest={{ venv_dir }}/lib/python{{ python_version }}/site-packages/project.pth
         owner={{ project_user }}
         group={{ project_user }}
@@ -160,7 +160,7 @@
 # source directory locally.
 - name: create/update .env file
   template: >
-    dest={{ source_dir }}/.env
+    dest={{ source_dir }}/{{ project_subdir }}/.env
     owner={{ project_user }}
     group={{ project_user }}
     mode=400
@@ -168,11 +168,21 @@
 
 - name: add the dotenv.sh helper script
   copy: src=dotenv.sh
-        dest={{ source_dir }}/dotenv.sh
+        dest={{ source_dir }}/{{ project_subdir }}/dotenv.sh
         owner={{ project_user }}
         group={{ project_user }}
         mode=700
 
+- name: copy shell script wrapper for manage.py
+  template: src=manage.sh
+            dest={{ root_dir }}/manage.sh
+            owner={{ project_name }}
+            group={{ project_name }}
+            mode=700
+
+# We're not using django_manage at the moment in tequila, but the cost of
+# keeping this is trivial, and it'll avoid mysterious errors if we start using
+# django_manage again:
 - name: make manage.py executable (because django_manage expects it)
   file: >
     path={{ source_dir }}/manage.py

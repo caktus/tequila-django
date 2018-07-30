@@ -22,11 +22,16 @@
 
 # TODO: let connections to 8000 through the firewall if we are load-balancing.
 
+
+# Use manage.sh so we use the same env vars from .env that we use on
+# other invocations of django manage.py. Unfortunately that means we cannot
+# use the ansible django_manage module.
+# TODO: see if we could use an ansible lookup plugin to read the .env file
+# and pass the values to the environment configuration item?
 - name: migrate
-  django_manage:
-    command: migrate --noinput -v 0
-    app_path: "{{ source_dir }}"
-    virtualenv: "{{ venv_dir }}"
+  shell: "{{ root_dir }}/manage.sh migrate --noinput -v 0"
+  args:
+    chdir: "{{ source_dir }}/{{ project_subdir }}"
   become_user: "{{ project_user }}"
   run_once: true
   vars:
@@ -34,13 +39,9 @@
 
 - name: restart gunicorn
   supervisorctl: name={{ project_name }}-server state=restarted
-
-- name: copy shell script wrapper for manage.py
-  template: src=manage.sh
-            dest={{ root_dir }}/manage.sh
-            owner={{ project_name }}
-            group={{ project_name }}
-            mode=700
+  # supervisorctl is idiotic. If your program isn't running, telling
+  # supervisotctl to restart it is an error. Why not just start it?
+  ignore_errors: true
 
 # Note: we want the collectstatic step to happen at the very end of
 # the roles section for the current playbook, so that it'll still

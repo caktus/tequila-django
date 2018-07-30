@@ -1,9 +1,13 @@
 ---
+# Use manage.sh so we use the same env vars from .env that we use on
+# other invocations of django manage.py. Unfortunately that means we cannot
+# use the ansible django_manage module.
+# TODO: see if we could use an ansible lookup plugin to read the .env file
+# and pass the values to the environment configuration item?
 - name: collectstatic
-  django_manage:
-    command: collectstatic
-    app_path: "{{ source_dir }}"
-    virtualenv: "{{ venv_dir }}"
+  shell: "{{ root_dir }}/manage.sh collectstatic --noinput"
+  args:
+    chdir: "{{ source_dir }}/{{ project_subdir }}"
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true

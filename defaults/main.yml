@@ -22,3 +22,5 @@ is_worker: false
 extra_env: {}
 celery_events: false
 celery_camera_class: "django_celery_monitor.camera.Camera"
+project_subdir: .
+wsgi_module: "{{ project_name }}.wsgi"

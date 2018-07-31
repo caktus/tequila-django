@@ -47,9 +47,9 @@
             mode=0600
   register: celery_tmpfile
 
-  - name: create tmpfiles.d directories
-    command: systemd-tmpfiles --create
-    when: celery_tmpfile is changed
+- name: create tmpfiles.d directories
+  command: systemd-tmpfiles --create
+  when: celery_tmpfile is changed
 
 - name: ensure celery is present
   supervisorctl: name={{ project_name }}-celery-{{ item }} state=present

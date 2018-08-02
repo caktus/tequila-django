@@ -9,6 +9,8 @@ v X.Y.Z on MMM dd, YYYY
 * New variable ``project_subdir`` to accomodate projects where
   the Django project (``manage.py`` etc.) are in a subdirectory of
   the repository.
+* New variable ``wsgi_module`` to accomodate projects where the
+  package of the wsgi module is not ``{{ project_name }}.wsgi``.
 
 v 0.9.15 on July 31, 2018
 --------------------------

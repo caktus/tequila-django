@@ -39,7 +39,7 @@
 
 - name: restart gunicorn
   supervisorctl: name={{ project_name }}-server state=restarted
-  # If your program isn't running, telling supervisotctl to restart
+  # If your program isn't running, telling supervisorctl to restart
   # it is an error. I would think that the Ansible module would
   # handle that, since they're supposed to be idempotent.
   # For now, just ignore errors:

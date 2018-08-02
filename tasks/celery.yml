@@ -37,7 +37,7 @@
 # that no stale celery PID files can exist across reboots.
 #
 # A systemd-tmpfiles setting is set up here so that /var/run/celery is created at
-# boot time with permissions allowing the project_name user to store their PIDs
+# boot time with permissions allowing the project_user user to store their PIDs
 # there.
 - name: install celery tmpfile.d pid directory setting
   template: src=celery_tmpfile.conf
@@ -49,7 +49,7 @@
 
 - name: create tmpfiles.d directories
   command: systemd-tmpfiles --create
-  when: celery_tmpfile|changed
+  when: celery_tmpfile is changed
 
 - name: ensure celery is present
   supervisorctl: name={{ project_name }}-celery-{{ item }} state=present

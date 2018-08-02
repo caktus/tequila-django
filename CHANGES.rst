@@ -3,6 +3,25 @@ Tequila-django
 
 Changes
 
+v X.Y.Z on MMM dd, YYYY
+-----------------------
+
+* New variable ``project_subdir`` to accomodate projects where
+  the Django project (``manage.py`` etc.) are in a subdirectory of
+  the repository.
+
+v 0.9.15 on July 31, 2018
+--------------------------
+
+* Fix syntax error in ``celery.yml``
+
+v 0.9.14 on July 30, 2018
+--------------------------
+
+* New variable ``project_port`` to have Django listen on a port
+  other than 8000, to help with multi-site deploys.
+* Update README with example for SSH agent forwarding.
+
 v 0.9.13 on June 1, 2018
 --------------------------
 

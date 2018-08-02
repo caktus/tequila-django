@@ -36,10 +36,16 @@ Installation
 Create an ``ansible.cfg`` file in your project directory to tell
 Ansible where to install your roles (optionally, set the
 ``ANSIBLE_ROLES_PATH`` environment variable to do the same thing, or
-allow the roles to be installed into ``/etc/ansible/roles``) ::
+allow the roles to be installed into ``/etc/ansible/roles``).
+You should also enable ssh pipelining for performance (but see
+the warning below under _Optimizations_ first), and might
+optionally want to enable ssh agent forwarding.::
 
     [defaults]
     roles_path = deployment/roles/
+    [ssh_connection]
+    pipelining = True
+    ssh_args = -o ForwardAgent=yes -o ControlMaster=auto -o ControlPersist=60s -o ControlPath=/tmp/ansible-ssh-%h-%p-%r
 
 Create a ``requirements.yml`` file in your project's deployment
 directory.  It is recommended to include `tequila-common
@@ -91,7 +97,7 @@ The following variables are used by the ``tequila-django`` role:
 - ``root_dir`` **default:** ``"/var/www/{{ project_name }}"``
 - ``source_dir`` **default:** ``"{{ root_dir }}/src"``
 - ``venv_dir`` **default:** ``"{{ root_dir }}/env"``
-- ``ssh_dir`` **default:** ``"/home/{{ project_name }}/.ssh"``
+- ``ssh_dir`` **default:** ``"/home/{{ project_user }}/.ssh"``
 - ``requirements_file`` **default:** ``"{{ source_dir }}/requirements/{{ env_name }}.txt"``
 - ``requirements_extra_args`` **default:** ``""``
 - ``use_newrelic`` **default:** ``false``
@@ -128,6 +134,7 @@ The following variables are used by the ``tequila-django`` role:
   before running it, then set this to the relative path of that subdirectory.
 - ``wsgi_module`` **default:** ``{{ project_name }}.wsgi`` - allow
   configuring an alternate path to the project's wsgi module.
+- ``project_port`` **default:** 8000 - what port Django listens on
 
 The ``extra_env`` variable is a dict of keys and values that is
 desired to be injected into the environment as variables, via the

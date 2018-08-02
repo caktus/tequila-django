@@ -150,7 +150,7 @@
   when: use_newrelic
 
 - name: set up the project python path
-  copy: content="{{ source_dir }}/{{ project_subdir }}"
+  copy: content="{{ django_dir }}"
         dest={{ venv_dir }}/lib/python{{ python_version }}/site-packages/project.pth
         owner={{ project_user }}
         group={{ project_user }}
@@ -158,26 +158,30 @@
 # THIS needs to come AFTER syncing the source to the server,
 # since that might remove files like .env that weren't in the
 # source directory locally.
+# .env should be in the Django dir in case the Django program
+# looks for it in its own top directory.
 - name: create/update .env file
   template: >
-    dest={{ source_dir }}/{{ project_subdir }}/.env
+    dest={{ django_dir }}/.env
     owner={{ project_user }}
     group={{ project_user }}
     mode=400
     src=envfile.j2
 
+# dotenv.sh is in the Django dir since that's where .env is.
 - name: add the dotenv.sh helper script
   copy: src=dotenv.sh
-        dest={{ source_dir }}/{{ project_subdir }}/dotenv.sh
+        dest={{ django_dir }}/dotenv.sh
         owner={{ project_user }}
         group={{ project_user }}
         mode=700
 
+# manage.sh is at the very top level, I guess for convenience?
 - name: copy shell script wrapper for manage.py
   template: src=manage.sh
             dest={{ root_dir }}/manage.sh
-            owner={{ project_name }}
-            group={{ project_name }}
+            owner={{ project_user }}
+            group={{ project_user }}
             mode=700
 
 # We're not using django_manage at the moment in tequila, but the cost of
@@ -185,7 +189,7 @@
 # django_manage again:
 - name: make manage.py executable (because django_manage expects it)
   file: >
-    path={{ source_dir }}/manage.py
+    path={{ django_dir }}/manage.py
     mode=0755
   become_user: "{{ project_user }}"
   vars:

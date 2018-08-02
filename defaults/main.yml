@@ -3,7 +3,7 @@ python_version: "2.7"
 root_dir: "/var/www/{{ project_name }}"
 source_dir: "{{ root_dir }}/src"
 venv_dir: "{{ root_dir }}/env"
-ssh_dir: "/home/{{ project_name }}/.ssh"
+ssh_dir: "/home/{{ project_user }}/.ssh"
 requirements_file: "{{ source_dir }}/requirements/{{ env_name }}.txt"
 project_user: "{{ project_name }}"
 project_settings: "{{ project_name }}.settings.deploy"
@@ -22,5 +22,6 @@ is_worker: false
 extra_env: {}
 celery_events: false
 celery_camera_class: "django_celery_monitor.camera.Camera"
-project_subdir: .
+project_subdir: ""
+django_dir: "{{ source_dir ~ '/' ~ project_subdir if project_subdir != '' else source_dir }}"
 wsgi_module: "{{ project_name }}.wsgi"

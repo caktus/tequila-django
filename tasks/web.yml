@@ -31,7 +31,7 @@
 - name: migrate
   shell: "{{ root_dir }}/manage.sh migrate --noinput -v 0"
   args:
-    chdir: "{{ source_dir }}/{{ project_subdir }}"
+    chdir: "{{ django_dir }}"
   become_user: "{{ project_user }}"
   run_once: true
   vars:
@@ -39,8 +39,10 @@
 
 - name: restart gunicorn
   supervisorctl: name={{ project_name }}-server state=restarted
-  # supervisorctl is idiotic. If your program isn't running, telling
-  # supervisotctl to restart it is an error. Why not just start it?
+  # If your program isn't running, telling supervisotctl to restart
+  # it is an error. I would think that the Ansible module would
+  # handle that, since they're supposed to be idempotent.
+  # For now, just ignore errors:
   ignore_errors: true
 
 # Note: we want the collectstatic step to happen at the very end of

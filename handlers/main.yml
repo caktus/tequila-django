@@ -7,7 +7,7 @@
 - name: collectstatic
   shell: "{{ root_dir }}/manage.sh collectstatic --noinput"
   args:
-    chdir: "{{ source_dir }}/{{ project_subdir }}"
+    chdir: "{{ django_dir }}"
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true

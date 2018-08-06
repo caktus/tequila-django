@@ -22,11 +22,16 @@
 
 # TODO: let connections to the {{ project_port }} through the firewall if we are load-balancing.
 
+
+# Use manage.sh so we use the same env vars from .env that we use on
+# other invocations of django manage.py. Unfortunately that means we cannot
+# use the ansible django_manage module.
+# TODO: see if we could use an ansible lookup plugin to read the .env file
+# and pass the values to the environment configuration item?
 - name: migrate
-  django_manage:
-    command: migrate --noinput -v 0
-    app_path: "{{ source_dir }}"
-    virtualenv: "{{ venv_dir }}"
+  shell: "{{ root_dir }}/manage.sh migrate --noinput -v 0"
+  args:
+    chdir: "{{ django_dir }}"
   become_user: "{{ project_user }}"
   run_once: true
   vars:
@@ -34,6 +39,11 @@
 
 - name: restart gunicorn
   supervisorctl: name={{ project_name }}-server state=restarted
+  # If your program isn't running, telling supervisorctl to restart
+  # it is an error. I would think that the Ansible module would
+  # handle that, since they're supposed to be idempotent.
+  # For now, just ignore errors:
+  ignore_errors: true
 
 - name: copy shell script wrapper for manage.py
   template: src=manage.sh

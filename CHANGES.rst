@@ -3,7 +3,7 @@ Tequila-django
 
 Changes
 
-v X.Y.Z on MMM dd, YYYY
+v 0.9.16 on Aug 6, 2018
 -----------------------
 
 * New variable ``project_subdir`` to accomodate projects where

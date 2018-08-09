@@ -1,9 +1,6 @@
 ---
 - name: collectstatic
-  django_manage:
-    command: collectstatic
-    app_path: "{{ source_dir }}"
-    virtualenv: "{{ venv_dir }}"
+  shell: "{{ root_dir }}/manage.sh collectstatic --noinput -v 0"
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true

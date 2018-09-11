@@ -3,10 +3,20 @@ Tequila-django
 
 Changes
 
-v X.Y.Z on MMM dd, YYYY
+v 0.9.17 on Sep 11, 2018
+------------------------
+
+* Consistently use manage.py and dotenv.sh to invoke Django with
+  the same environment.
+
+v 0.9.16 on Aug 6, 2018
 -----------------------
 
-* TBD
+* New variable ``project_subdir`` to accomodate projects where
+  the Django project (``manage.py`` etc.) are in a subdirectory of
+  the repository.
+* New variable ``wsgi_module`` to accomodate projects where the
+  package of the wsgi module is not ``{{ project_name }}.wsgi``.
 
 v 0.9.15 on July 31, 2018
 --------------------------

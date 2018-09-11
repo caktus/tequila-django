@@ -128,6 +128,12 @@ The following variables are used by the ``tequila-django`` role:
 - ``github_deploy_key`` **required if source_is_local is false**
 - ``local_project_dir`` **required if source_is_local**
 - ``extra_env`` **default:** empty dict
+- ``project_subdir`` **default:** ``""`` - if a project's main source
+  directory is a subdir of the git repo checkout top directory, e.g.
+  manage.py is not in the top directory and you have to cd to a subdirectory
+  before running it, then set this to the relative path of that subdirectory.
+- ``wsgi_module`` **default:** ``{{ project_name }}.wsgi`` - allow
+  configuring an alternate path to the project's wsgi module.
 - ``project_port`` **default:** 8000 - what port Django listens on
 
 The ``extra_env`` variable is a dict of keys and values that is

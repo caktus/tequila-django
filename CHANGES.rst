@@ -3,6 +3,12 @@ Tequila-django
 
 Changes
 
+v 0.9.17 on Sep 11, 2018
+------------------------
+
+* Consistently use manage.py and dotenv.sh to invoke Django with
+  the same environment.
+
 v 0.9.16 on Aug 6, 2018
 -----------------------
 

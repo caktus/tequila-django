@@ -22,6 +22,12 @@
 
 # TODO: let connections to the {{ project_port }} through the firewall if we are load-balancing.
 
+- name: copy shell script wrapper for manage.py
+  template: src=manage.sh
+            dest={{ root_dir }}/manage.sh
+            owner={{ project_user }}
+            group={{ project_user }}
+            mode=700
 
 # Use manage.sh so we use the same env vars from .env that we use on
 # other invocations of django manage.py. Unfortunately that means we cannot
@@ -44,13 +50,6 @@
   # handle that, since they're supposed to be idempotent.
   # For now, just ignore errors:
   ignore_errors: true
-
-- name: copy shell script wrapper for manage.py
-  template: src=manage.sh
-            dest={{ root_dir }}/manage.sh
-            owner={{ project_user }}
-            group={{ project_user }}
-            mode=700
 
 # Note: we want the collectstatic step to happen at the very end of
 # the roles section for the current playbook, so that it'll still

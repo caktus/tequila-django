@@ -85,12 +85,12 @@
   register: github_key
   when: github_deploy_key|default('')
 
-- name: checkout latest project source
+- name: checkout latest project source from {{ repo.url }} branch {{ repo.branch|default('master') }}
   git: repo={{ repo.url }}
        dest={{ source_dir }}
        version={{ repo.branch|default('master') }}
        force=yes
-       ssh_opts="-o StrictHostKeyChecking=no"
+       accept_hostkey=yes
        key_file={{ github_key_path|default(omit) }}
   become_user: "{{ project_user }}"
   vars:
@@ -127,24 +127,31 @@
   vars:
     ansible_ssh_pipelining: true
 
-- name: check for a package.json file
-  stat: path={{ source_dir }}/package.json
-  register: package_json
+# Kept running into AttributeError: '_NamespacePath' object has no attribute 'sort'
+# https://github.com/pypa/setuptools/issues/885#issuecomment-387711115
+# Fix is to force most recent setuptools
+# This has to run *before* tequila-django tries to pip install our requirements.
+- name: uninstall setuptools from venv
+  become_user: "{{ project_user }}"
+  pip:
+    name: setuptools
+    state: absent
+    virtualenv: "{{ venv_dir }}"
+    virtualenv_python: "/usr/bin/python{{ python_version }}"
 
-- name: check for build script in package.json
-  command: awk '/\<scripts\>/,/\<build\>/' {{ source_dir }}/package.json
-  register: build_script
-  when: package_json.stat.exists == True
+- name: uninstall python-setuptools system package
+  become: true
+  apt:
+    name: python-setuptools
+    state: absent
 
-- name: check developer dependencies
-  command: npm ls -dev --parseable --prefix {{ source_dir }}
-  register: dev_dependencies
-  when: package_json.stat.exists == True
-
-- name: fail when there are project-level devDependencies
-  fail:
-    msg: "There are packages listed under `devDependencies`. Please move them to `dependencies` instead."
-  when: not ignore_devdependencies and package_json.stat.exists == True and dev_dependencies.stdout_lines|length > 1
+- name: install latest setuptools into venv
+  become_user: "{{ project_user }}"
+  pip:
+    name: setuptools
+    state: latest
+    virtualenv: "{{ venv_dir }}"
+    virtualenv_python: "/usr/bin/python{{ python_version }}"
 
 - name: clear out leftover build cruft from the project requirements
   file: path={{ venv_dir }}/build state=absent
@@ -154,6 +161,7 @@
        virtualenv={{ venv_dir }}
        virtualenv_python=/usr/bin/python{{ python_version }}
        extra_args={{ requirements_extra_args|default("") }}
+       chdir={{ source_dir }}
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true
@@ -169,7 +177,7 @@
   when: use_newrelic
 
 - name: set up the project python path
-  copy: content="{{ source_dir }}"
+  copy: content="{{ django_dir }}"
         dest={{ venv_dir }}/lib/python{{ python_version }}/site-packages/project.pth
         owner={{ project_user }}
         group={{ project_user }}
@@ -177,24 +185,38 @@
 # THIS needs to come AFTER syncing the source to the server,
 # since that might remove files like .env that weren't in the
 # source directory locally.
+# .env should be in the Django dir in case the Django program
+# looks for it in its own top directory.
 - name: create/update .env file
   template: >
-    dest={{ source_dir }}/.env
+    dest={{ django_dir }}/.env
     owner={{ project_user }}
     group={{ project_user }}
     mode=400
     src=envfile.j2
 
+# dotenv.sh is in the Django dir since that's where .env is.
 - name: add the dotenv.sh helper script
   copy: src=dotenv.sh
-        dest={{ source_dir }}/dotenv.sh
+        dest={{ django_dir }}/dotenv.sh
         owner={{ project_user }}
         group={{ project_user }}
         mode=700
 
+# manage.sh is at the very top level, I guess for convenience?
+- name: copy shell script wrapper for manage.py
+  template: src=manage.sh
+            dest={{ root_dir }}/manage.sh
+            owner={{ project_user }}
+            group={{ project_user }}
+            mode=700
+
+# We're not using django_manage at the moment in tequila, but the cost of
+# keeping this is trivial, and it'll avoid mysterious errors if we start using
+# django_manage again:
 - name: make manage.py executable (because django_manage expects it)
   file: >
-    path={{ source_dir }}/manage.py
+    path={{ django_dir }}/manage.py
     mode=0755
   become_user: "{{ project_user }}"
   vars:

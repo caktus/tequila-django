@@ -36,30 +36,39 @@ Installation
 Create an ``ansible.cfg`` file in your project directory to tell
 Ansible where to install your roles (optionally, set the
 ``ANSIBLE_ROLES_PATH`` environment variable to do the same thing, or
-allow the roles to be installed into ``/etc/ansible/roles``) ::
+allow the roles to be installed into ``/etc/ansible/roles``).
+You should also enable ssh pipelining for performance (but see
+the warning below under _Optimizations_ first), and might
+optionally want to enable ssh agent forwarding.::
 
     [defaults]
     roles_path = deployment/roles/
+    [ssh_connection]
+    pipelining = True
+    ssh_args = -o ForwardAgent=yes -o ControlMaster=auto -o ControlPersist=60s -o ControlPath=/tmp/ansible-ssh-%h-%p-%r
 
 Create a ``requirements.yml`` file in your project's deployment
 directory.  It is recommended to include `tequila-common
-<https://github.com/caktus/tequila-common>`_, which sets up
-the project directory structure and users, and also `geerlingguy/nodejs
-<https://github.com/geerlingguy/ansible-role-nodejs>`_
-to install nodejs and any front-end packages that your project
-requires ::
+<https://github.com/caktus/tequila-common>`_, which sets up the
+project directory structure and users, and also `tequila-nodejs
+<https://github.com/caktus/tequila-nodejs>`_ and `geerlingguy/nodejs
+<https://github.com/geerlingguy/ansible-role-nodejs>`_ to install
+nodejs and any front-end packages that your project requires ::
 
     ---
     # file: deployment/requirements.yml
-    - src: geerlingguy.nodejs
-      version: 4.1.2
-      name: nodejs
-
     - src: https://github.com/caktus/tequila-common
       version: v0.8.0
 
     - src: https://github.com/caktus/tequila-django
       version: v0.9.11
+
+    - src: geerlingguy.nodejs
+      version: 4.1.2
+      name: nodejs
+
+    - src: https://github.com/caktus/tequila-nodejs
+      version: v0.8.0
 
 Run ``ansible-galaxy`` with your requirements file ::
 
@@ -90,7 +99,7 @@ The following variables are used by the ``tequila-django`` role:
 - ``root_dir`` **default:** ``"/var/www/{{ project_name }}"``
 - ``source_dir`` **default:** ``"{{ root_dir }}/src"``
 - ``venv_dir`` **default:** ``"{{ root_dir }}/env"``
-- ``ssh_dir`` **default:** ``"/home/{{ project_name }}/.ssh"``
+- ``ssh_dir`` **default:** ``"/home/{{ project_user }}/.ssh"``
 - ``requirements_file`` **default:** ``"{{ source_dir }}/requirements/{{ env_name }}.txt"``
 - ``requirements_extra_args`` **default:** ``""``
 - ``use_newrelic`` **default:** ``false``
@@ -120,8 +129,14 @@ The following variables are used by the ``tequila-django`` role:
 - ``source_is_local`` **default:** ``false``
 - ``github_deploy_key`` **required if source_is_local is false**
 - ``local_project_dir`` **required if source_is_local**
-- ``ignore_devdependencies`` **default:** ``false``
 - ``extra_env`` **default:** empty dict
+- ``project_subdir`` **default:** ``""`` - if a project's main source
+  directory is a subdir of the git repo checkout top directory, e.g.
+  manage.py is not in the top directory and you have to cd to a subdirectory
+  before running it, then set this to the relative path of that subdirectory.
+- ``wsgi_module`` **default:** ``{{ project_name }}.wsgi`` - allow
+  configuring an alternate path to the project's wsgi module.
+- ``project_port`` **default:** 8000 - what port Django listens on
 
 The ``extra_env`` variable is a dict of keys and values that is
 desired to be injected into the environment as variables, via the
@@ -177,8 +192,6 @@ the alternative camera class to use (e.g. ``myapp.Camera``). For
 more on Celery event monitoring, see
 `the docs <http://docs.celeryproject.org/en/latest/userguide/monitoring.html>`_.
 
-
-
 Optimizations
 -------------
 
@@ -192,11 +205,3 @@ to your project's `ansible.cfg` file ::
 
 **Warning:** this will cause deployments to break if ``securetty`` is used in your server's
 ``/etc/sudoers`` file.
-
-
-Notes
------
-
-See `geerlingguy/nodejs
-<https://github.com/geerlingguy/ansible-role-nodejs>`_ for the
-expected Ansible configuration variables for that role.

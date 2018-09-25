@@ -42,8 +42,34 @@ v 0.9.n+1 on Month Day, Year
   This has the advantage of requiring only one loop through the
   tequila-django tasks per server instance.
 
+v 0.9.17 on Sep 11, 2018
+------------------------
 
-v 0.9.n on Month Day, Year
+* Consistently use manage.py and dotenv.sh to invoke Django with
+  the same environment.
+
+v 0.9.16 on Aug 6, 2018
+-----------------------
+
+* New variable ``project_subdir`` to accomodate projects where
+  the Django project (``manage.py`` etc.) are in a subdirectory of
+  the repository.
+* New variable ``wsgi_module`` to accomodate projects where the
+  package of the wsgi module is not ``{{ project_name }}.wsgi``.
+
+v 0.9.15 on July 31, 2018
+--------------------------
+
+* Fix syntax error in ``celery.yml``
+
+v 0.9.14 on July 30, 2018
+--------------------------
+
+* New variable ``project_port`` to have Django listen on a port
+  other than 8000, to help with multi-site deploys.
+* Update README with example for SSH agent forwarding.
+
+v 0.9.13 on June 1, 2018
 --------------------------
 
 * Add additional variables to enable Celery event monitoring
@@ -56,6 +82,19 @@ v 0.9.n on Month Day, Year
   command introduced in Celery 3.1, and by default it uses
   the ``django-celery-monitor`` app to capture worker events.
 
+v 0.9.12 on May 31, 2018
+--------------------------
+
+* Split out the npm tasks into a new role, `tequila-nodejs
+  <https://github.com/caktus/tequila-nodejs>`_.  Projects upgrading to
+  this version will need to add tequila-nodejs to their
+  requirements.yml file while still retaining geerlingguy.nodejs,
+  which is a dependency of this new role.  Additionally, the
+  playbook/web.yml playbook should be updated to execute
+  tequila-nodejs instead of geerlingguy.nodejs, and it should be
+  placed immediately after the tequila-django role.  See the new
+  example web.yml file in the playbooks directory in the
+  `caktus/tequila <https://github.com/caktus/tequila>`_ repo.
 
 v 0.9.11 on March 19, 2018
 --------------------------

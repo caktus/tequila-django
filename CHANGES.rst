@@ -6,6 +6,12 @@ Changes
 v 0.9.n+1 on Month Day, Year
 ----------------------------
 
+* TBD
+
+
+v 0.9.18 on Sep 26, 2018
+----------------------------
+
 * Allow a celery beat instance to be deployed and configured
   independently of the celery worker instances.  This is because it is
   desirable to have only one beat instance, generally.

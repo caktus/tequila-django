@@ -1,32 +1,37 @@
 ---
 - name: configure celery
-  template: src=celery.conf
-            dest=/etc/supervisor/conf.d/{{ project_name }}-celery-{{ name }}.conf
-            owner=root
-            group=root
-            mode=0600
+  template:
+    src: celery.conf
+    dest: /etc/supervisor/conf.d/{{ project_name }}-celery-default.conf
+    owner: root
+    group: root
+    mode: 0600
+  when: is_worker
   vars:
     name: "default"
     command: "worker"
     flags: "{{ celery_worker_extra_args|default('--loglevel=INFO') }}{% if celery_events %} --events{% endif %}"
 
 - name: configure celery beat
-  template: src=celery.conf
-            dest=/etc/supervisor/conf.d/{{ project_name }}-celery-{{ name }}.conf
-            owner=root
-            group=root
-            mode=0600
+  template:
+    src: celery.conf
+    dest: /etc/supervisor/conf.d/{{ project_name }}-celery-beat.conf
+    owner: root
+    group: root
+    mode: 0600
+  when: is_celery_beat
   vars:
     name: "beat"
     command: "beat"
     flags: "--schedule={{ root_dir }}/celerybeat-schedule.db --pidfile=/var/run/celery/celerybeat.pid --loglevel=INFO"
 
 - name: configure celery events
-  template: src=celery.conf
-            dest=/etc/supervisor/conf.d/{{ project_name }}-celery-events.conf
-            owner=root
-            group=root
-            mode=0600
+  template:
+    src: celery.conf
+    dest: /etc/supervisor/conf.d/{{ project_name }}-celery-events.conf
+    owner: root
+    group: root
+    mode: 0600
   when: celery_events
   vars:
     name: "events"
@@ -51,14 +56,29 @@
   command: systemd-tmpfiles --create
   when: celery_tmpfile is changed
 
-- name: ensure celery is present
-  supervisorctl: name={{ project_name }}-celery-{{ item }} state=present
+- name: ensure celery events is present and restart
+  supervisorctl:
+    name: "{{ project_name }}-celery-events"
+    state: "{{ item }}"
+  when: celery_events
   with_items:
-    - default
-    - beat
+    - present
+    - restarted
 
-- name: restart celery
-  supervisorctl: name={{ project_name }}-celery-{{ item }} state=restarted
+- name: ensure celery beat is present and restart
+  supervisorctl:
+    name: "{{ project_name }}-celery-beat"
+    state: "{{ item }}"
+  when: is_celery_beat
   with_items:
-    - default
-    - beat
+    - present
+    - restarted
+
+- name: ensure celery is present and restart
+  supervisorctl:
+    name: "{{ project_name }}-celery-default"
+    state: "{{ item }}"
+  when: is_worker
+  with_items:
+    - present
+    - restarted

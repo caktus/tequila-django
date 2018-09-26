@@ -223,10 +223,10 @@
     ansible_ssh_pipelining: true
 
 - name: django server is either a web server or a worker
-  assert: { that: "is_web or is_worker" }
+  assert: { that: "is_web or is_worker or is_celery_beat" }
 
 - include: celery.yml
-  when: is_worker
+  when: is_worker or is_celery_beat
 
 - include: web.yml
   when: is_web

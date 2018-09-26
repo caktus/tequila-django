@@ -171,6 +171,18 @@ own group, e.g. ``[workers]``.  Your playbook(s) may then set
 ``is_celery_beat``, ``is_worker``, and ``is_web`` based on the
 instances' inventory group membership.
 
+One can fold together the invocation of tequila-django into a single playbook that uses group
+checking to set the parameters used, like so::
+
+  ---
+  - hosts: web:worker:beat
+    become: yes
+    roles:
+      - role: tequila-django
+        is_web: "{{ 'web' in group_names }}"
+        is_worker: "{{ 'worker' in group_names }}"
+        is_celery_beat: "{{ 'beat' in group_names }}"
+
 The ``celery_events`` and ``celery_camera_class`` variables are used
 to enable and configure Celery event monitoring using the "snapshots"
 system, which allows worker activity to be tracked in a less expensive

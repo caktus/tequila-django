@@ -160,14 +160,6 @@ every web instance, since they'll be getting in each other's way.
 This variable set to ``true`` causes the ``collectstatic`` task to be
 run only once.
 
-Due to `some <https://github.com/npm/npm/issues/17471>`_ `issues
-<https://github.com/ansible/ansible/issues/29234>`_ discovered with
-npm not managing package installation when new packages are added to
-the ``devDependencies`` object in package.json, tequila-django checks
-for the presence of any packages in this variable and will throw an
-error if found.  This behavior can be disabled by setting
-``ignore_devdependencies`` to ``true``.
-
 The ``is_celery_beat`` variable is used to specify which server
 instance will run celery beat, a worker dedicated to running tasks
 that are specified to execute at specific times.  Generally, you only

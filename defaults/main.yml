@@ -21,6 +21,7 @@ is_web: false
 is_worker: false
 is_celery_beat: false
 extra_env: {}
+celery_app: "{{ project_name }}"
 celery_events: false
 celery_camera_class: "django_celery_monitor.camera.Camera"
 project_subdir: ""

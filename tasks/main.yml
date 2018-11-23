@@ -69,7 +69,7 @@
 
 - name: restart supervisord
   service: name=supervisor state=restarted
-  when: supervisord_conf|changed
+  when: supervisord_conf is changed
 
 - name: store path to github key
   set_fact:

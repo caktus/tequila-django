@@ -9,6 +9,12 @@ v 0.9.n+1 on Month Day, Year
 * TBD
 
 
+v 0.9.19 on Nov 21, 2018
+----------------------------
+
+* Add ability to customize Celery app name via ``celery_app`` variable.
+
+
 v 0.9.18 on Sep 26, 2018
 ----------------------------
 

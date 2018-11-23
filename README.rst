@@ -119,6 +119,7 @@ The following variables are used by the ``tequila-django`` role:
 - ``cache_host`` **optional**
 - ``broker_host`` **optional**
 - ``broker_password`` **optional**
+- ``celery_app`` **default:** ``"{{ project_name }}"`` (e.g. the app name passed to ``celery -A APP_NAME worker``)
 - ``celery_worker_extra_args`` **default:** ``"--loglevel=INFO"``
 - ``celery_events`` **default:** ``false``
 - ``celery_camera_class`` **default:** ``"django_celery_monitor.camera.Camera"``

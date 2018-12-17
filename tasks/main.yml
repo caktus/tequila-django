@@ -120,6 +120,7 @@
     group: "{{ project_user }}"
     path: "{{ source_dir }}"
     recurse: yes
+    follow: false
 
 - name: delete pyc files
   shell: find {{ source_dir }} -name '*.pyc' -delete

@@ -9,6 +9,13 @@ v 0.9.n+1 on Month Day, Year
 * TBD
 
 
+v 0.9.20 on Dec 27, 2018
+------------------------
+
+* Remove --log-syslog from the supervisor gunicorn command line. Supervisor
+  was already logging the gunicorn stdout to syslog and trying to log it twice
+  was failing.
+
 v 0.9.19 on Nov 21, 2018
 ----------------------------
 

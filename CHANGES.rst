@@ -6,8 +6,9 @@ Changes
 v 0.9.n+1 on Month Day, Year
 ----------------------------
 
-* TBD
-
+* When rsyncing local source to server (when source_is_local is true,
+  mainly when using vagrant), exclude deployment dir, and use the
+  same ssh as ansible.
 
 v 0.9.20 on Dec 27, 2018
 ------------------------

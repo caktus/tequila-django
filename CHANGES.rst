@@ -3,8 +3,8 @@ Tequila-django
 
 Changes
 
-v 0.9.n+1 on Month Day, Year
-----------------------------
+v 0.9.21 on Jan 28, 2019
+------------------------
 
 * When rsyncing local source to server (when source_is_local is true,
   mainly when using vagrant), exclude deployment dir, and use the

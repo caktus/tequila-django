@@ -16,7 +16,7 @@ static_dir: "{{ root_dir }}/public/static"
 media_dir: "{{ root_dir }}/public/media"
 log_dir: "{{ root_dir }}/log"
 use_newrelic: false
-newrelic_version: ""
+new_relic_version: ""
 source_is_local: false
 is_web: false
 is_worker: false

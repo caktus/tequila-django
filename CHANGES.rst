@@ -3,7 +3,7 @@ Tequila-django
 
 Changes
 
-v 0.9.22 on Apr 1, 2019
+v 0.9.22 on Apr 5, 2019
 ------------------------
 
 * Allow pinning to a specific version of New Relic with ``new_relic_version``

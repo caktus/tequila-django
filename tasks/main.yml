@@ -99,6 +99,9 @@
 
 # NB! The trailing '/' on the 'src' parameter is significant, do not remove!
 # (see the docs: http://docs.ansible.com/ansible/synchronize_module.html)
+# Exclude 'deployment' dir since we don't need it on the server and it seems
+# to be prone to circular symlinks that break rsync.
+# Use whatever ssh executable ansible is using.
 - name: sync source from local directory
   synchronize:
     dest: "{{ source_dir }}"
@@ -106,11 +109,14 @@
     delete: yes
     rsync_path: "sudo rsync"  # Use sudo on the remote system
     recursive: true
+    set_remote_user: no
     rsync_opts:
       - "--exclude=.env"
       - "--exclude=.git"
       - "--exclude=node_modules"
+      - "--exclude=deployment"
       - "--exclude=*.pyc"
+      - "--rsh={{ ansible_ssh_executable }}"
   become: no  # stops synchronize trying to sudo locally
   when: source_is_local
 
@@ -175,7 +181,18 @@
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true
-  when: use_newrelic
+  when: use_newrelic and not new_relic_version|default(false)
+
+- name: optionally install newrelic at specific version
+  pip: name=newrelic
+       state=present
+       version={{ new_relic_version }}
+       virtualenv={{ venv_dir }}
+       virtualenv_python=/usr/bin/python{{ python_version }}
+  become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
+  when: use_newrelic and new_relic_version|default(false)
 
 - name: set up the project python path
   copy: content="{{ django_dir }}"

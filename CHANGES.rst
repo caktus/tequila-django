@@ -3,11 +3,25 @@ Tequila-django
 
 Changes
 
-v 0.9.n+1 on Month Day, Year
-----------------------------
+v 0.9.22 on Apr 5, 2019
+------------------------
 
-* TBD
+* Allow pinning to a specific version of New Relic with ``new_relic_version``
 
+
+v 0.9.21 on Jan 28, 2019
+------------------------
+
+* When rsyncing local source to server (when source_is_local is true,
+  mainly when using vagrant), exclude deployment dir, and use the
+  same ssh as ansible.
+
+v 0.9.20 on Dec 27, 2018
+------------------------
+
+* Remove --log-syslog from the supervisor gunicorn command line. Supervisor
+  was already logging the gunicorn stdout to syslog and trying to log it twice
+  was failing.
 
 v 0.9.19 on Nov 21, 2018
 ----------------------------

@@ -111,11 +111,19 @@ The following variables are used by the ``tequila-django`` role:
 - ``project_user`` **default:** ``"{{ project_name }}"``
 - ``project_settings`` **default:** ``"{{ project_name }}.settings.deploy"``
 - ``secret_key`` **required**
-- ``db_name`` **default:** ``"{{ project_name }}_{{ env_name }}"``
+- ``db_admin_user`` Username to use when creating db users and databases.
+  Required if create_db or create_db_user are true.
+- ``db_admin_password`` Password to use when creating db users and databases.
+  Required if create_db or create_db_user are true.
+- ``create_db`` **default:** false - whether tequila-django should create the 'db_name' database. If true, db_admin_user and db_admin_password must be set.
+- ``db_name`` **default:** ``"{{ project_name }}_{{ env_name }}"`` (only used if `create_db` is true)
+- ``create_db_user`` **default:** false - whether tequila-django should create the 'db_user' database user. If true, db_admin_user and db_admin_password must be set.
 - ``db_user`` **default:** ``"{{ project_name }}_{{ env_name }}"``
+  Username to use at runtime to access the project database.
+- ``db_password`` **required**
+  Password to use with db_user.
 - ``db_host`` **default:** ``'localhost'``
 - ``db_port`` **default:** ``5432``
-- ``db_password`` **required**
 - ``cache_host`` **optional**
 - ``broker_host`` **optional**
 - ``broker_password`` **optional**
@@ -145,6 +153,14 @@ desired to be injected into the environment as variables, via the
 with the django-dotenv library.  Variables will be injected into this
 file wrapped in single-quotes, so no additional escaping needs to be
 done to make them safe.
+
+tequila-django primarily works as a database client, but if desired,
+you can set db_admin_user, db_admin_password, create_db_user, and create_db
+to have tequila-django create the database and/or the database user
+to be used at runtime. Alternatively, you can create the database and
+user elsewhere (maybe using
+`tequila-postgresql <https://github.com/caktus/tequila-postgresql>`_),
+and just set the db user's name and password for tequila-django to use.
 
 Note that if ``source_is_local`` is set to false, a Github checkout
 key needs to be provided in the environment secrets file, and that key

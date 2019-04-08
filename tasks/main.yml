@@ -23,6 +23,7 @@
     - postfix
     - git-core
     - python-virtualenv
+    - postgresql-client
 
 - name: ensure postfix is running
   service: name=postfix state=started
@@ -228,7 +229,35 @@
   vars:
     ansible_ssh_pipelining: true
 
-- name: django server is either a web server or a worker
+- name: create low privilege database user {{ db_user }} for project to use at runtime
+  when: '{{ create_db_user }}'
+  run_once: true
+  postgresql_user: name="{{ db_user }}"
+                   password="{{ db_password }}"
+                   encrypted=yes
+                   role_attr_flags=NOCREATEDB,NOCREATEROLE,NOSUPERUSER
+                   db="{{ db_name }}"
+                   login_user="{{ db_admin_user }}"
+                   login_password="{{ db_admin_password }}"
+                   login_host="{{ db_host }}"
+                   port="{{ db_port }}"
+
+- name: create database {{ db_name }} owned by {{ db_user }}
+  when: '{{ create_db }}'
+  run_once: true
+  postgresql_db: name="{{ db_name }}"
+                 owner="{{ db_user }}"
+                 state=present
+                 encoding='UTF-8'
+                 lc_collate='en_US.UTF-8'
+                 lc_ctype='en_US.UTF-8'
+                 template='template0'
+                 login_user="{{ db_admin_user }}"
+                 login_password="{{ db_admin_password }}"
+                 login_host="{{ db_host }}"
+                 port="{{ db_port }}"
+
+- name: django server is at least one of a web server or a worker or runs celery beat
   assert: { that: "is_web or is_worker or is_celery_beat" }
 
 - include: celery.yml

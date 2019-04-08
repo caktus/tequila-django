@@ -3,6 +3,15 @@ Tequila-django
 
 Changes
 
+v 1.0.0? on date?
+-----------------
+
+* Optionally, take responsibility for creating a project user and
+  database. Must be given admin credentials for the db server.
+  See `db_admin_user`, `db_admin_password`, `create_db`, and
+  `create_db_user`.
+* Install postgresql-client.
+
 v 0.9.21 on Jan 28, 2019
 ------------------------
 

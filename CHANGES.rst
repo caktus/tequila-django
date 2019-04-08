@@ -3,6 +3,13 @@ Tequila-django
 
 Changes
 
+v 0.9.23 on Apr 8, 2019
+-----------------------
+
+* Don't follow symlinks when changing ownership of copied source code, since
+  they might point to things on the dev's system that don't make sense on the
+  server and even result in infinite recursion trying to follow them.
+
 v 0.9.22 on Apr 5, 2019
 ------------------------
 

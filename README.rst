@@ -129,7 +129,11 @@ The following variables are used by the ``tequila-django`` role:
 - ``media_dir`` **default:** ``"{{ root_dir }}/public/media"``
 - ``log_dir`` **default:** ``"{{ root_dir }}/log"``
 - ``repo`` **required:** dict containing url and branch
-- ``source_is_local`` **default:** ``false``
+- ``source_is_local`` **default:** ``false`` If true, source is rsynced from the
+  current directory instead of being pulled from a git repo. Be warned that this
+  might not be compatible with projects that use Django and webpack, as rsyncing
+  the source can clobber directories we've already set up such as 'static_dir'
+  and that can cause a webpack build to fail. (This might be worth fixing some day.)
 - ``github_deploy_key`` **required if source_is_local is false**
 - ``local_project_dir`` **required if source_is_local**
 - ``extra_env`` **default:** empty dict

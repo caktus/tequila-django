@@ -3,6 +3,15 @@ Tequila-django
 
 Changes
 
+v 0.9.24 on April 23, 2019
+--------------------------
+
+* Reload supervisor config and restart Django (gunicorn) on deploy.
+  (This is a fix; we always intended to do this.)
+
+* WARNING: source_is_local might not be compatible with a project that uses
+  node and webpack.  See README for details.
+
 v 0.9.23 on Apr 8, 2019
 -----------------------
 

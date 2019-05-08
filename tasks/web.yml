@@ -43,6 +43,7 @@
   vars:
     ansible_ssh_pipelining: true
 
+# Important note: "supervisorctl state=present" does a supervisorctl reload.
 - name: ensure gunicorn is present and restart
   supervisorctl:
     name: "{{ project_name }}-server"

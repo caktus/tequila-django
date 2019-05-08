@@ -85,15 +85,6 @@
   register: github_key
   when: github_deploy_key|default('')
 
-# clear source dir in case we're switching from source_is_local true to false -
-# an existing directory that isn't a git checkout would make our git checkout
-# fail.
-- name: clear source dir
-  file:
-    path: '{{ source_dir }}'
-    state: absent
-
-# Use 'depth' to minimize amount of stuff we have to download each time
 - name: checkout latest project source from {{ repo.url }} branch {{ repo.branch|default('master') }}
   git: repo={{ repo.url }}
        dest={{ source_dir }}
@@ -101,7 +92,6 @@
        force=yes
        accept_hostkey=yes
        key_file={{ github_key_path|default(omit) }}
-       depth=2
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true
@@ -126,7 +116,6 @@
       - "--exclude=node_modules"
       - "--exclude=deployment"
       - "--exclude=*.pyc"
-      - "--exclude=__pycache__"
       - "--rsh={{ ansible_ssh_executable }}"
   become: no  # stops synchronize trying to sudo locally
   when: source_is_local

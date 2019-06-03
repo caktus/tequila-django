@@ -127,6 +127,7 @@
     group: "{{ project_user }}"
     path: "{{ source_dir }}"
     recurse: yes
+    follow: false
 
 - name: delete pyc files
   shell: find {{ source_dir }} -name '*.pyc' -delete
@@ -181,7 +182,18 @@
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true
-  when: use_newrelic
+  when: use_newrelic and not new_relic_version|default(false)
+
+- name: optionally install newrelic at specific version
+  pip: name=newrelic
+       state=present
+       version={{ new_relic_version }}
+       virtualenv={{ venv_dir }}
+       virtualenv_python=/usr/bin/python{{ python_version }}
+  become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
+  when: use_newrelic and new_relic_version|default(false)
 
 - name: set up the project python path
   copy: content="{{ django_dir }}"

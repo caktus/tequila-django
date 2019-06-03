@@ -104,6 +104,8 @@ The following variables are used by the ``tequila-django`` role:
 - ``requirements_extra_args`` **default:** ``""``
 - ``use_newrelic`` **default:** ``false``
 - ``new_relic_license_key`` **required if use_newrelic is true**
+- ``new_relic_version`` **default:** ``""`` pin to a specific version of
+  `New Relic APM <https://pypi.org/project/newrelic/>`_, e.g. ``"4.14.0.115"``
 - ``cloud_staticfiles`` **default:** ``false``
 - ``gunicorn_version`` **optional**
 - ``gunicorn_num_workers`` **required**

@@ -134,6 +134,13 @@
   vars:
     ansible_ssh_pipelining: true
 
+# allow user to force recreation of venv by passing force_recreate_venv=1 to the deploy command
+- name: force recreation of virtualenv
+  file:
+    path: "{{ venv_dir }}"
+    state: absent
+  when: force_recreate_venv
+
 # Kept running into AttributeError: '_NamespacePath' object has no attribute 'sort'
 # https://github.com/pypa/setuptools/issues/885#issuecomment-387711115
 # Fix is to force most recent setuptools

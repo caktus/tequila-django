@@ -3,6 +3,7 @@ python_version: "2.7"
 root_dir: "/var/www/{{ project_name }}"
 source_dir: "{{ root_dir }}/src"
 venv_dir: "{{ root_dir }}/env"
+force_recreate_venv: false
 ssh_dir: "/home/{{ project_user }}/.ssh"
 requirements_file: "{{ source_dir }}/requirements/{{ env_name }}.txt"
 project_user: "{{ project_name }}"

@@ -3,6 +3,13 @@ Tequila-django
 
 Changes
 
+v 0.9.24 on Jul 5, 2019
+-----------------------
+
+* Add variable ``force_recreate_venv`` to allow virtualenv to be deleted, forcing
+  it to be refreshed from scratch.
+
+
 v 0.9.23 on Apr 8, 2019
 -----------------------
 

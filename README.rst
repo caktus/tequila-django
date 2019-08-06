@@ -99,6 +99,7 @@ The following variables are used by the ``tequila-django`` role:
 - ``root_dir`` **default:** ``"/var/www/{{ project_name }}"``
 - ``source_dir`` **default:** ``"{{ root_dir }}/src"``
 - ``venv_dir`` **default:** ``"{{ root_dir }}/env"``
+- ``force_recreate_venv`` **default:** ``false``
 - ``ssh_dir`` **default:** ``"/home/{{ project_user }}/.ssh"``
 - ``requirements_file`` **default:** ``"{{ source_dir }}/requirements/{{ env_name }}.txt"``
 - ``requirements_extra_args`` **default:** ``""``

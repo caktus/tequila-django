@@ -141,6 +141,9 @@ The following variables are used by the ``tequila-django`` role:
 - ``wsgi_module`` **default:** ``{{ project_name }}.wsgi`` - allow
   configuring an alternate path to the project's wsgi module.
 - ``project_port`` **default:** 8000 - what port Django listens on
+- ``app_packages`` **default:** ``[]`` - additional system packages to install
+  in addition to the ``default_app_packages`` (refer to ``defaults/main.yml``
+  for the default package list).
 
 The ``extra_env`` variable is a dict of keys and values that is
 desired to be injected into the environment as variables, via the

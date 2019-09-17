@@ -25,14 +25,6 @@
 
 # TODO: let connections to the {{ project_port }} through the firewall if we are load-balancing.
 
-- name: copy shell script wrapper for manage.py
-  template:
-    src: manage.sh
-    dest: "{{ root_dir }}/manage.sh"
-    owner: "{{ project_user }}"
-    group: "{{ project_user }}"
-    mode: 0700
-
 # Use manage.sh so we use the same env vars from .env that we use on
 # other invocations of django manage.py. Unfortunately that means we cannot
 # use the ansible django_manage module.

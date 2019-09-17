@@ -126,9 +126,11 @@
     recurse: yes
     follow: false
 
-- name: delete pyc files
-  shell: find {{ source_dir }} -name '*.pyc' -delete
+- name: delete pyc files and __pycache__ directories
+  shell: find {{ source_dir }} -name '*.pyc' -or -name '__pycache__ ' -delete -print
   become_user: "{{ project_user }}"
+  register: _delete_pyc_result
+  changed_when: _delete_pyc_result.stdout
   vars:
     ansible_ssh_pipelining: true
 

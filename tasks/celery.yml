@@ -45,11 +45,12 @@
 # boot time with permissions allowing the project_user user to store their PIDs
 # there.
 - name: install celery tmpfile.d pid directory setting
-  template: src=celery_tmpfile.conf
-            dest=/etc/tmpfiles.d/celery.conf
-            owner=root
-            group=root
-            mode=0600
+  template:
+    src: celery_tmpfile.conf
+    dest: /etc/tmpfiles.d/celery.conf
+    owner: root
+    group: root
+    mode: 0600
   register: celery_tmpfile
 
 - name: create tmpfiles.d directories

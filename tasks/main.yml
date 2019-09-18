@@ -1,6 +1,10 @@
 ---
 - name: install app packages
-  apt: pkg={{ item }} state=present update_cache=yes cache_valid_time=3600
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
   with_items:
     - python-pip
     - libpq-dev
@@ -25,50 +29,64 @@
     - python-virtualenv
 
 - name: ensure postfix is running
-  service: name=postfix state=started
+  service:
+    name: postfix
+    state: started
 
 - name: remove supervisor system package
-  apt: pkg=supervisor state=absent
+  apt:
+    pkg: supervisor
+    state: absent
 
 # pip install to obtain a consistent version number
 - name: pip install supervisor
-  pip: name=supervisor version=3.0
+  pip:
+    name: supervisor
+    version: 3.0
 
 - name: upload supervisor init script
-  copy: src=service.sh
-        dest=/etc/init.d/supervisor
-        owner=root
-        group=root
-        mode=744
+  copy:
+    src: service.sh
+    dest: /etc/init.d/supervisor
+    owner: root
+    group: root
+    mode: 0744
 
 - name: create directory paths for supervisor
-  file: path={{ item }}
-        state=directory
-        owner=root
-        group=root
-        mode=744
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0744
   with_items:
     - /var/log/supervisor
     - /etc/supervisor/conf.d
 
 - name: upload supervisor config file
-  copy: src=supervisord.conf
-        dest=/etc/supervisor/supervisord.conf
-        owner=root
-        group=root
-        mode=644
+  copy:
+    src: supervisord.conf
+    dest: /etc/supervisor/supervisord.conf
+    owner: root
+    group: root
+    mode: 0644
   register: supervisord_conf
 
 - name: symlink supervisor config to official location
-  file: src=/etc/supervisor/supervisord.conf
-        dest=/etc/supervisord.conf
-        state=link
+  file:
+    src: /etc/supervisor/supervisord.conf
+    dest: /etc/supervisord.conf
+    state: link
 
 - name: enable supervisor
-  service: name=supervisor enabled=yes
+  service:
+    name: supervisor
+    enabled: yes
 
 - name: restart supervisord
-  service: name=supervisor state=restarted
+  service:
+    name: supervisor
+    state: restarted
   when: supervisord_conf is changed
 
 - name: store path to github key
@@ -77,21 +95,23 @@
   when: github_deploy_key|default('')
 
 - name: upload github key
-  copy: content={{ github_deploy_key }}
-        dest={{ github_key_path }}
-        owner={{ project_user }}
-        group={{ project_user }}
-        mode=600
+  copy:
+    content: "{{ github_deploy_key }}"
+    dest: "{{ github_key_path }}"
+    owner: "{{ project_user }}"
+    group: "{{ project_user }}"
+    mode: 0600
   register: github_key
   when: github_deploy_key|default('')
 
 - name: checkout latest project source from {{ repo.url }} branch {{ repo.branch|default('master') }}
-  git: repo={{ repo.url }}
-       dest={{ source_dir }}
-       version={{ repo.branch|default('master') }}
-       force=yes
-       accept_hostkey=yes
-       key_file={{ github_key_path|default(omit) }}
+  git:
+    repo: "{{ repo.url }}"
+    dest: "{{ source_dir }}"
+    version: "{{ repo.branch|default('master') }}"
+    force: yes
+    accept_hostkey: yes
+    key_file: "{{ github_key_path|default(omit) }}"
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true
@@ -168,44 +188,39 @@
     virtualenv_python: "/usr/bin/python{{ python_version }}"
 
 - name: clear out leftover build cruft from the project requirements
-  file: path={{ venv_dir }}/build state=absent
+  file:
+    path: "{{ venv_dir }}/build"
+    state: absent
 
 - name: pip install the project requirements
-  pip: requirements={{ requirements_file }}
-       virtualenv={{ venv_dir }}
-       virtualenv_python=/usr/bin/python{{ python_version }}
-       extra_args={{ requirements_extra_args|default("") }}
-       chdir={{ source_dir }}
+  pip:
+    requirements: "{{ requirements_file }}"
+    virtualenv: "{{ venv_dir }}"
+    virtualenv_python: "/usr/bin/python{{ python_version }}"
+    extra_args: "{{ requirements_extra_args|default('') }}"
+    chdir: "{{ source_dir }}"
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true
 
 - name: optionally install newrelic
-  pip: name=newrelic
-       state=latest
-       virtualenv={{ venv_dir }}
-       virtualenv_python=/usr/bin/python{{ python_version }}
+  pip:
+    name: newrelic
+    state: "{{ new_relic_version|default(false)|ternary('present','latest') }}"
+    version: "{{ new_relic_version|default(omit) }}"
+    virtualenv: "{{ venv_dir }}"
+    virtualenv_python: "/usr/bin/python{{ python_version }}"
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true
-  when: use_newrelic and not new_relic_version|default(false)
-
-- name: optionally install newrelic at specific version
-  pip: name=newrelic
-       state=present
-       version={{ new_relic_version }}
-       virtualenv={{ venv_dir }}
-       virtualenv_python=/usr/bin/python{{ python_version }}
-  become_user: "{{ project_user }}"
-  vars:
-    ansible_ssh_pipelining: true
-  when: use_newrelic and new_relic_version|default(false)
+  when: use_newrelic
 
 - name: set up the project python path
-  copy: content="{{ django_dir }}"
-        dest={{ venv_dir }}/lib/python{{ python_version }}/site-packages/project.pth
-        owner={{ project_user }}
-        group={{ project_user }}
+  copy:
+    content: "{{ django_dir }}"
+    dest: "{{ venv_dir }}/lib/python{{ python_version }}/site-packages/project.pth"
+    owner: "{{ project_user }}"
+    group: "{{ project_user }}"
 
 # THIS needs to come AFTER syncing the source to the server,
 # since that might remove files like .env that weren't in the
@@ -213,45 +228,49 @@
 # .env should be in the Django dir in case the Django program
 # looks for it in its own top directory.
 - name: create/update .env file
-  template: >
-    dest={{ django_dir }}/.env
-    owner={{ project_user }}
-    group={{ project_user }}
-    mode=400
-    src=envfile.j2
+  template:
+    dest: "{{ django_dir }}/.env"
+    owner: "{{ project_user }}"
+    group: "{{ project_user }}"
+    mode: 0400
+    src: envfile.j2
 
 # dotenv.sh is in the Django dir since that's where .env is.
 - name: add the dotenv.sh helper script
-  copy: src=dotenv.sh
-        dest={{ django_dir }}/dotenv.sh
-        owner={{ project_user }}
-        group={{ project_user }}
-        mode=700
+  copy:
+    src: dotenv.sh
+    dest: "{{ django_dir }}/dotenv.sh"
+    owner: "{{ project_user }}"
+    group: "{{ project_user }}"
+    mode: 0700
 
 # manage.sh is at the very top level, I guess for convenience?
 - name: copy shell script wrapper for manage.py
-  template: src=manage.sh
-            dest={{ root_dir }}/manage.sh
-            owner={{ project_user }}
-            group={{ project_user }}
-            mode=700
+  template:
+    src: manage.sh
+    dest: "{{ root_dir }}/manage.sh"
+    owner: "{{ project_user }}"
+    group: "{{ project_user }}"
+    mode: 0700
 
 # We're not using django_manage at the moment in tequila, but the cost of
 # keeping this is trivial, and it'll avoid mysterious errors if we start using
 # django_manage again:
 - name: make manage.py executable (because django_manage expects it)
-  file: >
-    path={{ django_dir }}/manage.py
-    mode=0755
+  file:
+    path: "{{ django_dir }}/manage.py"
+    mode: 0755
   become_user: "{{ project_user }}"
   vars:
     ansible_ssh_pipelining: true
 
 - name: django server is either a web server or a worker
-  assert: { that: "is_web or is_worker or is_celery_beat" }
+  assert:
+    that:
+      - is_web or is_worker or is_celery_beat
 
-- include: celery.yml
+- include_tasks: celery.yml
   when: is_worker or is_celery_beat
 
-- include: web.yml
+- include_tasks: web.yml
   when: is_web

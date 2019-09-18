@@ -11,23 +11,27 @@
     ansible_ssh_pipelining: true
 
 - name: configure gunicorn
-  template: src=gunicorn.conf
-            dest=/etc/supervisor/conf.d/{{ project_name }}-gunicorn.conf
-            owner=root
-            group=root
-            mode=0600
+  template:
+    src: gunicorn.conf
+    dest: /etc/supervisor/conf.d/{{ project_name }}-gunicorn.conf
+    owner: root
+    group: root
+    mode: 0600
 
 - name: ensure gunicorn is present
-  supervisorctl: name={{ project_name }}-server state=present
+  supervisorctl:
+    name: "{{ project_name }}-server"
+    state: present
 
 # TODO: let connections to the {{ project_port }} through the firewall if we are load-balancing.
 
 - name: copy shell script wrapper for manage.py
-  template: src=manage.sh
-            dest={{ root_dir }}/manage.sh
-            owner={{ project_user }}
-            group={{ project_user }}
-            mode=700
+  template:
+    src: manage.sh
+    dest: "{{ root_dir }}/manage.sh"
+    owner: "{{ project_user }}"
+    group: "{{ project_user }}"
+    mode: 0700
 
 # Use manage.sh so we use the same env vars from .env that we use on
 # other invocations of django manage.py. Unfortunately that means we cannot
@@ -44,7 +48,9 @@
     ansible_ssh_pipelining: true
 
 - name: restart gunicorn
-  supervisorctl: name={{ project_name }}-server state=restarted
+  supervisorctl:
+    name: "{{ project_name }}-server"
+    state: restarted
   # If your program isn't running, telling supervisorctl to restart
   # it is an error. I would think that the Ansible module would
   # handle that, since they're supposed to be idempotent.

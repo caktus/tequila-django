@@ -48,15 +48,3 @@
   # handle that, since they're supposed to be idempotent.
   # For now, just ignore errors:
   ignore_errors: true
-
-# Note: we want the collectstatic step to happen at the very end of
-# the roles section for the current playbook, so that it'll still
-# happen in the order needed even if the playbook has another role
-# after tequila-django, e.g. geerlingguy/nodejs and tequila-nodejs.
-# Thus, it is moved out into handlers.
-
-- name: trigger collectstatic
-  command: /bin/true
-  notify:
-    - collectstatic
-  run_once: "{{ cloud_staticfiles }}"

@@ -29,6 +29,8 @@ celery_camera_class: "django_celery_monitor.camera.Camera"
 project_subdir: ""
 django_dir: "{{ source_dir ~ '/' ~ project_subdir if project_subdir != '' else source_dir }}"
 wsgi_module: "{{ project_name }}.wsgi"
+use_uwsgi: false
+uwsgi_ini_path: "{{ root_dir }}/uwsgi.ini"
 project_port: 8000
 app_packages: []
 default_app_packages:

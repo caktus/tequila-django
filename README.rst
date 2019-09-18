@@ -140,6 +140,15 @@ The following variables are used by the ``tequila-django`` role:
   before running it, then set this to the relative path of that subdirectory.
 - ``wsgi_module`` **default:** ``{{ project_name }}.wsgi`` - allow
   configuring an alternate path to the project's wsgi module.
+- ``use_uwsgi`` **default:** ``false`` - use uWSGI instead of gunicorn to run
+  the web app.
+- ``uwsgi_ini_path`` **default:** ``"{{ root_dir }}/uwsgi.ini"`` - path to the
+  uWSGI configuration file for this app.
+- ``uwsgi_processes`` **default:** ``10`` - number of uWSGI worker processes to
+  run.
+- ``uwsgi_extra_ini_settings`` **default:** ``""`` - string containing extra
+  options to set in the uWSGI configuration file. Each line in the string should
+  normally contain ``key = value`` pairs.
 - ``project_port`` **default:** 8000 - what port Django listens on
 - ``app_packages`` **default:** ``[]`` - additional system packages to install
   in addition to the ``default_app_packages`` (refer to ``defaults/main.yml``

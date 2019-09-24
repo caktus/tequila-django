@@ -10,6 +10,8 @@ v 0.9.25 on ???????????
   <https://docs.ansible.com/ansible/latest/user_guide/playbooks_intro.html#action-shorthand>`_
   for all tasks.
 * Change ``include`` to ``include_tasks``.
+* Add ``app_packages`` variable for specifying additional system packages to be
+  installed.
 
 v 0.9.24 on Jul 5, 2019
 -----------------------

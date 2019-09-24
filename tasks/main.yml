@@ -1,32 +1,10 @@
 ---
 - name: install app packages
   apt:
-    pkg: "{{ item }}"
+    pkg: "{{ default_app_packages | union(app_packages) }}"
     state: present
     update_cache: yes
     cache_valid_time: 3600
-  with_items:
-    - python-pip
-    - libpq-dev
-    - libev-dev
-    - libevent-dev
-    - libmemcached-dev
-    - libjpeg8
-    - libjpeg8-dev
-    - libfreetype6
-    - libfreetype6-dev
-    - zlib1g
-    - zlib1g-dev
-    - libxml2-dev
-    - libxslt1-dev
-    - ghostscript
-    - libpython{{ python_version }}
-    - libpython{{ python_version }}-dev
-    - python{{ python_version }}
-    - python{{ python_version }}-dev
-    - postfix
-    - git-core
-    - python-virtualenv
 
 - name: ensure postfix is running
   service:
@@ -42,7 +20,7 @@
 - name: pip install supervisor
   pip:
     name: supervisor
-    version: 3.0
+    version: "3.0"
 
 - name: upload supervisor init script
   copy:
@@ -148,9 +126,11 @@
     recurse: yes
     follow: false
 
-- name: delete pyc files
-  shell: find {{ source_dir }} -name '*.pyc' -delete
+- name: delete pyc files and __pycache__ directories
+  shell: find {{ source_dir }} -name '*.pyc' -or -name '__pycache__ ' -delete -print
   become_user: "{{ project_user }}"
+  register: _delete_pyc_result
+  changed_when: _delete_pyc_result.stdout
   vars:
     ansible_ssh_pipelining: true
 

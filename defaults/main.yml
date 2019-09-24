@@ -30,3 +30,26 @@ project_subdir: ""
 django_dir: "{{ source_dir ~ '/' ~ project_subdir if project_subdir != '' else source_dir }}"
 wsgi_module: "{{ project_name }}.wsgi"
 project_port: 8000
+app_packages: []
+default_app_packages:
+  - python-pip
+  - libpq-dev
+  - libev-dev
+  - libevent-dev
+  - libmemcached-dev
+  - libjpeg8
+  - libjpeg8-dev
+  - libfreetype6
+  - libfreetype6-dev
+  - zlib1g
+  - zlib1g-dev
+  - libxml2-dev
+  - libxslt1-dev
+  - ghostscript
+  - libpython{{ python_version }}
+  - libpython{{ python_version }}-dev
+  - python{{ python_version }}
+  - python{{ python_version }}-dev
+  - postfix
+  - git-core
+  - python-virtualenv

@@ -1,0 +1,60 @@
+---
+
+- name: remove uwsgi system package
+  apt:
+    pkg: uwsgi
+    state: absent
+
+- name: install uwsgi
+  pip:
+    name: uwsgi
+    state: present
+    version: "{{ uwsgi_version|default(omit) }}"
+    virtualenv: "{{ venv_dir }}"
+    virtualenv_python: /usr/bin/python{{ python_version }}
+  become_user: "{{ project_user }}"
+  vars:
+    ansible_ssh_pipelining: true
+
+- name: configure uwsgi service
+  template:
+    src: uwsgi.service.j2
+    dest: /etc/systemd/system/{{ project_name }}-uwsgi.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: configure uwsgi ini
+  template:
+    src: uwsgi.ini.j2
+    dest: "{{ uwsgi_ini_path }}"
+    owner: "{{ project_user }}"
+    group: "{{ project_user }}"
+    mode: 0644
+
+- name: ensure uwsgi is enabled
+  systemd:
+    name: "{{ project_name }}-uwsgi.service"
+    enabled: true
+    daemon_reload: true
+
+# TODO: let connections to the {{ project_port }} through the firewall if we are load-balancing.
+
+# Use manage.sh so we use the same env vars from .env that we use on
+# other invocations of django manage.py. Unfortunately that means we cannot
+# use the ansible django_manage module.
+# TODO: see if we could use an ansible lookup plugin to read the .env file
+# and pass the values to the environment configuration item?
+- name: migrate
+  shell: "{{ root_dir }}/manage.sh migrate --noinput -v 0"
+  args:
+    chdir: "{{ django_dir }}"
+  become_user: "{{ project_user }}"
+  run_once: true
+  vars:
+    ansible_ssh_pipelining: true
+
+- name: restart uwsgi
+  systemd:
+    name: "{{ project_name }}-uwsgi.service"
+    state: restarted

@@ -252,5 +252,21 @@
 - include_tasks: celery.yml
   when: is_worker or is_celery_beat
 
-- include_tasks: web.yml
+- include_tasks: web-gunicorn.yml
+  when: is_web and not use_uwsgi | default(false)
+
+- include_tasks: web-uwsgi.yml
+  when: is_web and use_uwsgi | default(false)
+
+# Note: we want the collectstatic step to happen at the very end of
+# the roles section for the current playbook, so that it'll still
+# happen in the order needed even if the playbook has another role
+# after tequila-django, e.g. geerlingguy/nodejs and tequila-nodejs.
+# Thus, it is moved out into handlers.
+
+- name: trigger collectstatic
+  command: /bin/true
+  notify:
+    - collectstatic
+  run_once: "{{ cloud_staticfiles }}"
   when: is_web

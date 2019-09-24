@@ -12,6 +12,7 @@ v 0.9.25 on ???????????
 * Change ``include`` to ``include_tasks``.
 * Add ``app_packages`` variable for specifying additional system packages to be
   installed.
+* Add support for using uWSGI instead of gunicorn.
 
 v 0.9.24 on Jul 5, 2019
 -----------------------

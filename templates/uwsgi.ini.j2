@@ -1,0 +1,21 @@
+{{ ansible_managed | comment }}
+
+[uwsgi]
+
+enable-threads      = true
+single-interpreter  = true
+master              = true
+processes           = {{ uwsgi_processes | default(10) }}
+vacuum              = true
+uid                 = {{ project_user }}
+gid                 = {{ project_user }}
+die-on-term         = true
+
+http                = :{{ project_port }}
+socket              = /tmp/{{ project_name }}.sock
+chmod-socket        = 664
+
+chdir               = {{ source_dir }}
+module              = {{ wsgi_module }}
+
+{{ uwsgi_extra_ini_settings | default('') }}

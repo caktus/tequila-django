@@ -3,8 +3,8 @@ Tequila-django
 
 Changes
 
-v 0.9.25 on ???????????
------------------------
+v 0.9.25 on Sep 24, 2019
+------------------------
 
 * Consistently use the `recommended module:options format
   <https://docs.ansible.com/ansible/latest/user_guide/playbooks_intro.html#action-shorthand>`_

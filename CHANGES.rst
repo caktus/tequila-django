@@ -3,6 +3,12 @@ Tequila-django
 
 Changes
 
+v 0.9.26 on ???
+------------------------
+* Omit ``version`` parameter to "optionally install newrelic" task when ``new_relic_version``
+  is an empty string.
+
+
 v 0.9.25 on Sep 24, 2019
 ------------------------
 

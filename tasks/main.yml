@@ -187,7 +187,7 @@
   pip:
     name: newrelic
     state: "{{ new_relic_version|default(false)|ternary('present','latest') }}"
-    version: "{{ new_relic_version|default(omit) }}"
+    version: "{{ new_relic_version|default(omit,true) }}"
     virtualenv: "{{ venv_dir }}"
     virtualenv_python: "/usr/bin/python{{ python_version }}"
   become_user: "{{ project_user }}"

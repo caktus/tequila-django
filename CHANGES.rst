@@ -7,7 +7,7 @@ v 0.9.26 on ???
 ------------------------
 * Omit ``version`` parameter to "optionally install newrelic" task when ``new_relic_version``
   is an empty string.
-
+* Change file permissions for supervisor, to allow group access.
 
 v 0.9.25 on Sep 24, 2019
 ------------------------

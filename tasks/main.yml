@@ -28,7 +28,7 @@
     dest: /etc/init.d/supervisor
     owner: root
     group: root
-    mode: 0744
+    mode: 0755
 
 - name: create directory paths for supervisor
   file:
@@ -36,7 +36,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0744
+    mode: 0755
   with_items:
     - /var/log/supervisor
     - /etc/supervisor/conf.d

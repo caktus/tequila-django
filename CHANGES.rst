@@ -3,8 +3,8 @@ Tequila-django
 
 Changes
 
-v 0.9.26 on ???
-------------------------
+v 0.9.26 on Oct 2, 2019
+-----------------------
 * Omit ``version`` parameter to "optionally install newrelic" task when ``new_relic_version``
   is an empty string.
 * Change file permissions for supervisor, to allow group access.

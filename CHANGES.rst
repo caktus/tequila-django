@@ -3,6 +3,10 @@ Tequila-django
 
 Changes
 
+v 0.9.27 on ???????????
+-----------------------
+* Allow overriding the default supervisor version.
+
 v 0.9.26 on Oct 2, 2019
 -----------------------
 * Omit ``version`` parameter to "optionally install newrelic" task when ``new_relic_version``

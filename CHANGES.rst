@@ -3,8 +3,8 @@ Tequila-django
 
 Changes
 
-v 0.9.27 on ???????????
------------------------
+v 0.9.27 on Oct 17, 2019
+------------------------
 * Allow overriding the default supervisor version.
 
 v 0.9.26 on Oct 2, 2019

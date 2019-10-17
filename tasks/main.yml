@@ -20,7 +20,7 @@
 - name: pip install supervisor
   pip:
     name: supervisor
-    version: "3.0"
+    version: "{{ supervisor_version }}"
 
 - name: upload supervisor init script
   copy:

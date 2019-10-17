@@ -18,6 +18,7 @@ media_dir: "{{ root_dir }}/public/media"
 log_dir: "{{ root_dir }}/log"
 use_newrelic: false
 new_relic_version: ""
+supervisor_version: "3.0"
 source_is_local: false
 is_web: false
 is_worker: false

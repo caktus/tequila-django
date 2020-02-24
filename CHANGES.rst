@@ -3,6 +3,11 @@ Tequila-django
 
 Changes
 
+v 0.9.28 on Feb 24, 2020
+------------------------
+* Remove support for ``gunicorn_version``. Instead, projects should pin the specific
+  gunicorn version that they want to use in their requirements.txt file.
+
 v 0.9.27 on Oct 17, 2019
 ------------------------
 * Allow overriding the default supervisor version.

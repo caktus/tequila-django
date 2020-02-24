@@ -1,14 +1,19 @@
 ---
-- name: install gunicorn
-  pip:
-    name: gunicorn
-    state: present
-    version: "{{ gunicorn_version|default(omit) }}"
-    virtualenv: "{{ venv_dir }}"
-    virtualenv_python: /usr/bin/python{{ python_version }}
+- name: halt if gunicorn_version is set
+  assert:
+    that: gunicorn_version is not defined
+    fail_msg: "gunicorn_version is no longer supported. Remove it from your Ansible variables and instead pin `gunicorn==x.y` in your project's requirements"
+
+- name: ensure that gunicorn is present in the virtualenv
+  command: "{{ venv_dir }}/bin/pip show gunicorn"
   become_user: "{{ project_user }}"
-  vars:
-    ansible_ssh_pipelining: true
+  ignore_errors: True
+  register: result
+
+- name: warn if gunicorn is not installed
+  fail:
+    msg: please specify gunicorn in your project's requirements file
+  when: result is failed
 
 - name: configure gunicorn
   template:

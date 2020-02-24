@@ -109,7 +109,6 @@ The following variables are used by the ``tequila-django`` role:
   `New Relic APM <https://pypi.org/project/newrelic/>`_, e.g. ``"4.14.0.115"``
 - ``supervisor_version`` **default:** ``"3.0"``
 - ``cloud_staticfiles`` **default:** ``false``
-- ``gunicorn_version`` **optional**
 - ``gunicorn_num_workers`` **required**
 - ``gunicorn_num_threads`` **optional** (note: gunicorn sets this at ``1`` if ``--threads=...`` is not given)
 - ``project_user`` **default:** ``"{{ project_name }}"``
